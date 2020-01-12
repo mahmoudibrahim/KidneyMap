@@ -1,0 +1,10 @@
+9	PEC	Epithelial	Parietal Epithelial Cells	Parietal Epithelial Cells
+10	(M)Fi	Mesenchymal	(Myo)fibroblast	(Myo)fibroblast
+4	ivSMC1mm	Mesenchymal	Injured Vascular Smooth Muscle Cells	Injured Vascular Smooth Muscle Cells 1
+2	ivSMC2mm	Mesenchymal	Injured Vascular Smooth Muscle Cells	Injured Vascular Smooth Muscle Cells 2
+3	ivSMC3mm	Mesenchymal	Injured Vascular Smooth Muscle Cells	Injured Vascular Smooth Muscle Cells 3
+8	Mesa	Mesenchymal	Mesangial Cells	Mesangial Cells
+5	Pemm1	Mesenchymal	Pericytes	Pericytes 1
+7	rSMC	Mesenchymal	Vascular Smooth Muscle Cells	Renin Producing Smooth Muscle Cells
+1	vSMC1	Mesenchymal	Vascular Smooth Muscle Cells	Vascular Smooth Muscle Cells 1
+6	Pemm2	Mesenchymal	Pericytes	Pericytes 2
