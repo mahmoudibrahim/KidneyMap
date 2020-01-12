@@ -1,0 +1,1028 @@
+Division	Category	Gene Symbol
+Core matrisome	ECM Glycoproteins	ABI3BP
+Core matrisome	ECM Glycoproteins	ADIPOQ
+Core matrisome	ECM Glycoproteins	AEBP1
+Core matrisome	ECM Glycoproteins	AGRN
+Core matrisome	ECM Glycoproteins	AMBN
+Core matrisome	ECM Glycoproteins	AMELX
+Core matrisome	ECM Glycoproteins	AMELY
+Core matrisome	ECM Glycoproteins	BGLAP
+Core matrisome	ECM Glycoproteins	BMPER
+Core matrisome	ECM Glycoproteins	BSPH1
+Core matrisome	ECM Glycoproteins	CDCP2
+Core matrisome	ECM Glycoproteins	CILP
+Core matrisome	ECM Glycoproteins	CILP2
+Core matrisome	ECM Glycoproteins	COCH
+Core matrisome	ECM Glycoproteins	COLQ
+Core matrisome	ECM Glycoproteins	COMP
+Core matrisome	ECM Glycoproteins	CRELD1
+Core matrisome	ECM Glycoproteins	CRELD2
+Core matrisome	ECM Glycoproteins	CRIM1
+Core matrisome	ECM Glycoproteins	CRISPLD1
+Core matrisome	ECM Glycoproteins	CRISPLD2
+Core matrisome	ECM Glycoproteins	CTGF
+Core matrisome	ECM Glycoproteins	CTHRC1
+Core matrisome	ECM Glycoproteins	CYR61
+Core matrisome	ECM Glycoproteins	DDX26B
+Core matrisome	ECM Glycoproteins	DMBT1
+Core matrisome	ECM Glycoproteins	DMP1
+Core matrisome	ECM Glycoproteins	DPT
+Core matrisome	ECM Glycoproteins	DSPP
+Core matrisome	ECM Glycoproteins	ECM1
+Core matrisome	ECM Glycoproteins	ECM2
+Core matrisome	ECM Glycoproteins	EDIL3
+Core matrisome	ECM Glycoproteins	EFEMP1
+Core matrisome	ECM Glycoproteins	EFEMP2
+Core matrisome	ECM Glycoproteins	EGFLAM
+Core matrisome	ECM Glycoproteins	ELN
+Core matrisome	ECM Glycoproteins	ELSPBP1
+Core matrisome	ECM Glycoproteins	EMID1
+Core matrisome	ECM Glycoproteins	EMILIN1
+Core matrisome	ECM Glycoproteins	EMILIN2
+Core matrisome	ECM Glycoproteins	EMILIN3
+Core matrisome	ECM Glycoproteins	EYS
+Core matrisome	ECM Glycoproteins	FBLN1
+Core matrisome	ECM Glycoproteins	FBLN2
+Core matrisome	ECM Glycoproteins	FBLN5
+Core matrisome	ECM Glycoproteins	FBLN7
+Core matrisome	ECM Glycoproteins	FBN1
+Core matrisome	ECM Glycoproteins	FBN2
+Core matrisome	ECM Glycoproteins	FBN3
+Core matrisome	ECM Glycoproteins	FGA
+Core matrisome	ECM Glycoproteins	FGB
+Core matrisome	ECM Glycoproteins	FGG
+Core matrisome	ECM Glycoproteins	FGL1
+Core matrisome	ECM Glycoproteins	FGL2
+Core matrisome	ECM Glycoproteins	FN1
+Core matrisome	ECM Glycoproteins	FNDC1
+Core matrisome	ECM Glycoproteins	FNDC7
+Core matrisome	ECM Glycoproteins	FNDC8
+Core matrisome	ECM Glycoproteins	FRAS1
+Core matrisome	ECM Glycoproteins	GAS6
+Core matrisome	ECM Glycoproteins	GLDN
+Core matrisome	ECM Glycoproteins	HMCN1
+Core matrisome	ECM Glycoproteins	HMCN2
+Core matrisome	ECM Glycoproteins	IBSP
+Core matrisome	ECM Glycoproteins	IGFALS
+Core matrisome	ECM Glycoproteins	IGFBP1
+Core matrisome	ECM Glycoproteins	IGFBP2
+Core matrisome	ECM Glycoproteins	IGFBP3
+Core matrisome	ECM Glycoproteins	IGFBP4
+Core matrisome	ECM Glycoproteins	IGFBP5
+Core matrisome	ECM Glycoproteins	IGFBP6
+Core matrisome	ECM Glycoproteins	IGFBP7
+Core matrisome	ECM Glycoproteins	IGFBPL1
+Core matrisome	ECM Glycoproteins	IGSF10
+Core matrisome	ECM Glycoproteins	KAL1
+Core matrisome	ECM Glycoproteins	KCP
+Core matrisome	ECM Glycoproteins	LAMA1
+Core matrisome	ECM Glycoproteins	LAMA2
+Core matrisome	ECM Glycoproteins	LAMA3
+Core matrisome	ECM Glycoproteins	LAMA4
+Core matrisome	ECM Glycoproteins	LAMA5
+Core matrisome	ECM Glycoproteins	LAMB1
+Core matrisome	ECM Glycoproteins	LAMB2
+Core matrisome	ECM Glycoproteins	LAMB3
+Core matrisome	ECM Glycoproteins	LAMB4
+Core matrisome	ECM Glycoproteins	LAMC1
+Core matrisome	ECM Glycoproteins	LAMC2
+Core matrisome	ECM Glycoproteins	LAMC3
+Core matrisome	ECM Glycoproteins	LGI1
+Core matrisome	ECM Glycoproteins	LGI2
+Core matrisome	ECM Glycoproteins	LGI3
+Core matrisome	ECM Glycoproteins	LGI4
+Core matrisome	ECM Glycoproteins	LRG1
+Core matrisome	ECM Glycoproteins	LTBP1
+Core matrisome	ECM Glycoproteins	LTBP2
+Core matrisome	ECM Glycoproteins	LTBP3
+Core matrisome	ECM Glycoproteins	LTBP4
+Core matrisome	ECM Glycoproteins	MATN1
+Core matrisome	ECM Glycoproteins	MATN2
+Core matrisome	ECM Glycoproteins	MATN3
+Core matrisome	ECM Glycoproteins	MATN4
+Core matrisome	ECM Glycoproteins	MEPE
+Core matrisome	ECM Glycoproteins	MFAP1
+Core matrisome	ECM Glycoproteins	MFAP2
+Core matrisome	ECM Glycoproteins	MFAP3
+Core matrisome	ECM Glycoproteins	MFAP4
+Core matrisome	ECM Glycoproteins	MFAP5
+Core matrisome	ECM Glycoproteins	MFGE8
+Core matrisome	ECM Glycoproteins	MGP
+Core matrisome	ECM Glycoproteins	MMRN1
+Core matrisome	ECM Glycoproteins	MMRN2
+Core matrisome	ECM Glycoproteins	MXRA5
+Core matrisome	ECM Glycoproteins	NDNF
+Core matrisome	ECM Glycoproteins	NELL1
+Core matrisome	ECM Glycoproteins	NELL2
+Core matrisome	ECM Glycoproteins	NID1
+Core matrisome	ECM Glycoproteins	NID2
+Core matrisome	ECM Glycoproteins	NOV
+Core matrisome	ECM Glycoproteins	NPNT
+Core matrisome	ECM Glycoproteins	NTN1
+Core matrisome	ECM Glycoproteins	NTN3
+Core matrisome	ECM Glycoproteins	NTN4
+Core matrisome	ECM Glycoproteins	NTN5
+Core matrisome	ECM Glycoproteins	NTNG1
+Core matrisome	ECM Glycoproteins	NTNG2
+Core matrisome	ECM Glycoproteins	OIT3
+Core matrisome	ECM Glycoproteins	OTOG
+Core matrisome	ECM Glycoproteins	OTOL1
+Core matrisome	ECM Glycoproteins	PAPLN
+Core matrisome	ECM Glycoproteins	PCOLCE
+Core matrisome	ECM Glycoproteins	PCOLCE2
+Core matrisome	ECM Glycoproteins	POMZP3
+Core matrisome	ECM Glycoproteins	POSTN
+Core matrisome	ECM Glycoproteins	PXDN
+Core matrisome	ECM Glycoproteins	PXDNL
+Core matrisome	ECM Glycoproteins	RELN
+Core matrisome	ECM Glycoproteins	RSPO1
+Core matrisome	ECM Glycoproteins	RSPO2
+Core matrisome	ECM Glycoproteins	RSPO3
+Core matrisome	ECM Glycoproteins	RSPO4
+Core matrisome	ECM Glycoproteins	SBSPON
+Core matrisome	ECM Glycoproteins	SLIT1
+Core matrisome	ECM Glycoproteins	SLIT2
+Core matrisome	ECM Glycoproteins	SLIT3
+Core matrisome	ECM Glycoproteins	SMOC1
+Core matrisome	ECM Glycoproteins	SMOC2
+Core matrisome	ECM Glycoproteins	SNED1
+Core matrisome	ECM Glycoproteins	SPARC
+Core matrisome	ECM Glycoproteins	SPARCL1
+Core matrisome	ECM Glycoproteins	SPON1
+Core matrisome	ECM Glycoproteins	SPON2
+Core matrisome	ECM Glycoproteins	SPP1
+Core matrisome	ECM Glycoproteins	SRPX
+Core matrisome	ECM Glycoproteins	SRPX2
+Core matrisome	ECM Glycoproteins	SSPO
+Core matrisome	ECM Glycoproteins	SVEP1
+Core matrisome	ECM Glycoproteins	TECTA
+Core matrisome	ECM Glycoproteins	TECTB
+Core matrisome	ECM Glycoproteins	TGFBI
+Core matrisome	ECM Glycoproteins	THBS1
+Core matrisome	ECM Glycoproteins	THBS2
+Core matrisome	ECM Glycoproteins	THBS3
+Core matrisome	ECM Glycoproteins	THBS4
+Core matrisome	ECM Glycoproteins	THSD4
+Core matrisome	ECM Glycoproteins	TINAG
+Core matrisome	ECM Glycoproteins	TINAGL1
+Core matrisome	ECM Glycoproteins	TNC
+Core matrisome	ECM Glycoproteins	TNFAIP6
+Core matrisome	ECM Glycoproteins	TNN
+Core matrisome	ECM Glycoproteins	TNR
+Core matrisome	ECM Glycoproteins	TNXB
+Core matrisome	ECM Glycoproteins	TSKU
+Core matrisome	ECM Glycoproteins	TSPEAR
+Core matrisome	ECM Glycoproteins	VIT
+Core matrisome	ECM Glycoproteins	VTN
+Core matrisome	ECM Glycoproteins	VWA1
+Core matrisome	ECM Glycoproteins	VWA2
+Core matrisome	ECM Glycoproteins	VWA3A
+Core matrisome	ECM Glycoproteins	VWA3B
+Core matrisome	ECM Glycoproteins	VWA5A
+Core matrisome	ECM Glycoproteins	VWA5B1
+Core matrisome	ECM Glycoproteins	VWA5B2
+Core matrisome	ECM Glycoproteins	VWA7
+Core matrisome	ECM Glycoproteins	VWA9
+Core matrisome	ECM Glycoproteins	VWCE
+Core matrisome	ECM Glycoproteins	VWDE
+Core matrisome	ECM Glycoproteins	VWF
+Core matrisome	ECM Glycoproteins	WISP1
+Core matrisome	ECM Glycoproteins	WISP2
+Core matrisome	ECM Glycoproteins	WISP3
+Core matrisome	ECM Glycoproteins	ZP1
+Core matrisome	ECM Glycoproteins	ZP2
+Core matrisome	ECM Glycoproteins	ZP3
+Core matrisome	ECM Glycoproteins	ZP4
+Core matrisome	ECM Glycoproteins	ZPLD1
+Core matrisome	Collagens	COL10A1
+Core matrisome	Collagens	COL11A1
+Core matrisome	Collagens	COL11A2
+Core matrisome	Collagens	COL12A1
+Core matrisome	Collagens	COL13A1
+Core matrisome	Collagens	COL14A1
+Core matrisome	Collagens	COL15A1
+Core matrisome	Collagens	COL16A1
+Core matrisome	Collagens	COL17A1
+Core matrisome	Collagens	COL18A1
+Core matrisome	Collagens	COL19A1
+Core matrisome	Collagens	COL1A1
+Core matrisome	Collagens	COL1A2
+Core matrisome	Collagens	COL20A1
+Core matrisome	Collagens	COL21A1
+Core matrisome	Collagens	COL22A1
+Core matrisome	Collagens	COL23A1
+Core matrisome	Collagens	COL24A1
+Core matrisome	Collagens	COL25A1
+Core matrisome	Collagens	COL26A1
+Core matrisome	Collagens	COL27A1
+Core matrisome	Collagens	COL28A1
+Core matrisome	Collagens	COL2A1
+Core matrisome	Collagens	COL3A1
+Core matrisome	Collagens	COL4A1
+Core matrisome	Collagens	COL4A2
+Core matrisome	Collagens	COL4A3
+Core matrisome	Collagens	COL4A4
+Core matrisome	Collagens	COL4A5
+Core matrisome	Collagens	COL4A6
+Core matrisome	Collagens	COL5A1
+Core matrisome	Collagens	COL5A2
+Core matrisome	Collagens	COL5A3
+Core matrisome	Collagens	COL6A1
+Core matrisome	Collagens	COL6A2
+Core matrisome	Collagens	COL6A3
+Core matrisome	Collagens	COL6A5
+Core matrisome	Collagens	COL6A6
+Core matrisome	Collagens	COL7A1
+Core matrisome	Collagens	COL8A1
+Core matrisome	Collagens	COL8A2
+Core matrisome	Collagens	COL9A1
+Core matrisome	Collagens	COL9A2
+Core matrisome	Collagens	COL9A3
+Core matrisome	Proteoglycans	ACAN
+Core matrisome	Proteoglycans	ASPN
+Core matrisome	Proteoglycans	BCAN
+Core matrisome	Proteoglycans	BGN
+Core matrisome	Proteoglycans	CHAD
+Core matrisome	Proteoglycans	CHADL
+Core matrisome	Proteoglycans	DCN
+Core matrisome	Proteoglycans	EPYC
+Core matrisome	Proteoglycans	ESM1
+Core matrisome	Proteoglycans	FMOD
+Core matrisome	Proteoglycans	HAPLN1
+Core matrisome	Proteoglycans	HAPLN2
+Core matrisome	Proteoglycans	HAPLN3
+Core matrisome	Proteoglycans	HAPLN4
+Core matrisome	Proteoglycans	HSPG2
+Core matrisome	Proteoglycans	IMPG1
+Core matrisome	Proteoglycans	IMPG2
+Core matrisome	Proteoglycans	KERA
+Core matrisome	Proteoglycans	LUM
+Core matrisome	Proteoglycans	NCAN
+Core matrisome	Proteoglycans	NYX
+Core matrisome	Proteoglycans	OGN
+Core matrisome	Proteoglycans	OMD
+Core matrisome	Proteoglycans	OPTC
+Core matrisome	Proteoglycans	PODN
+Core matrisome	Proteoglycans	PODNL1
+Core matrisome	Proteoglycans	PRELP
+Core matrisome	Proteoglycans	PRG2
+Core matrisome	Proteoglycans	PRG3
+Core matrisome	Proteoglycans	PRG4
+Core matrisome	Proteoglycans	SPOCK1
+Core matrisome	Proteoglycans	SPOCK2
+Core matrisome	Proteoglycans	SPOCK3
+Core matrisome	Proteoglycans	SRGN
+Core matrisome	Proteoglycans	VCAN
+Matrisome-associated	ECM-affiliated Proteins	ANXA1
+Matrisome-associated	ECM-affiliated Proteins	ANXA10
+Matrisome-associated	ECM-affiliated Proteins	ANXA11
+Matrisome-associated	ECM-affiliated Proteins	ANXA13
+Matrisome-associated	ECM-affiliated Proteins	ANXA2
+Matrisome-associated	ECM-affiliated Proteins	ANXA3
+Matrisome-associated	ECM-affiliated Proteins	ANXA4
+Matrisome-associated	ECM-affiliated Proteins	ANXA5
+Matrisome-associated	ECM-affiliated Proteins	ANXA6
+Matrisome-associated	ECM-affiliated Proteins	ANXA7
+Matrisome-associated	ECM-affiliated Proteins	ANXA8
+Matrisome-associated	ECM-affiliated Proteins	ANXA8L1
+Matrisome-associated	ECM-affiliated Proteins	ANXA9
+Matrisome-associated	ECM-affiliated Proteins	C1QA
+Matrisome-associated	ECM-affiliated Proteins	C1QB
+Matrisome-associated	ECM-affiliated Proteins	C1QC
+Matrisome-associated	ECM-affiliated Proteins	C1QL1
+Matrisome-associated	ECM-affiliated Proteins	C1QL2
+Matrisome-associated	ECM-affiliated Proteins	C1QL3
+Matrisome-associated	ECM-affiliated Proteins	C1QL4
+Matrisome-associated	ECM-affiliated Proteins	C1QTNF1
+Matrisome-associated	ECM-affiliated Proteins	C1QTNF2
+Matrisome-associated	ECM-affiliated Proteins	C1QTNF3
+Matrisome-associated	ECM-affiliated Proteins	C1QTNF4
+Matrisome-associated	ECM-affiliated Proteins	C1QTNF5
+Matrisome-associated	ECM-affiliated Proteins	C1QTNF6
+Matrisome-associated	ECM-affiliated Proteins	C1QTNF7
+Matrisome-associated	ECM-affiliated Proteins	C1QTNF8
+Matrisome-associated	ECM-affiliated Proteins	C1QTNF9
+Matrisome-associated	ECM-affiliated Proteins	CD209
+Matrisome-associated	ECM-affiliated Proteins	CLC
+Matrisome-associated	ECM-affiliated Proteins	CLEC10A
+Matrisome-associated	ECM-affiliated Proteins	CLEC11A
+Matrisome-associated	ECM-affiliated Proteins	CLEC12A
+Matrisome-associated	ECM-affiliated Proteins	CLEC12B
+Matrisome-associated	ECM-affiliated Proteins	CLEC14A
+Matrisome-associated	ECM-affiliated Proteins	CLEC17A
+Matrisome-associated	ECM-affiliated Proteins	CLEC18A
+Matrisome-associated	ECM-affiliated Proteins	CLEC18B
+Matrisome-associated	ECM-affiliated Proteins	CLEC18C
+Matrisome-associated	ECM-affiliated Proteins	CLEC19A
+Matrisome-associated	ECM-affiliated Proteins	CLEC1A
+Matrisome-associated	ECM-affiliated Proteins	CLEC1B
+Matrisome-associated	ECM-affiliated Proteins	CLEC2A
+Matrisome-associated	ECM-affiliated Proteins	CLEC2B
+Matrisome-associated	ECM-affiliated Proteins	CLEC2D
+Matrisome-associated	ECM-affiliated Proteins	CLEC2L
+Matrisome-associated	ECM-affiliated Proteins	CLEC3A
+Matrisome-associated	ECM-affiliated Proteins	CLEC3B
+Matrisome-associated	ECM-affiliated Proteins	CLEC4A
+Matrisome-associated	ECM-affiliated Proteins	CLEC4C
+Matrisome-associated	ECM-affiliated Proteins	CLEC4D
+Matrisome-associated	ECM-affiliated Proteins	CLEC4E
+Matrisome-associated	ECM-affiliated Proteins	CLEC4F
+Matrisome-associated	ECM-affiliated Proteins	CLEC4G
+Matrisome-associated	ECM-affiliated Proteins	CLEC4M
+Matrisome-associated	ECM-affiliated Proteins	CLEC5A
+Matrisome-associated	ECM-affiliated Proteins	CLEC6A
+Matrisome-associated	ECM-affiliated Proteins	CLEC7A
+Matrisome-associated	ECM-affiliated Proteins	CLEC9A
+Matrisome-associated	ECM-affiliated Proteins	COLEC10
+Matrisome-associated	ECM-affiliated Proteins	COLEC11
+Matrisome-associated	ECM-affiliated Proteins	COLEC12
+Matrisome-associated	ECM-affiliated Proteins	CSPG4
+Matrisome-associated	ECM-affiliated Proteins	CSPG5
+Matrisome-associated	ECM-affiliated Proteins	ELFN1
+Matrisome-associated	ECM-affiliated Proteins	ELFN2
+Matrisome-associated	ECM-affiliated Proteins	EMCN
+Matrisome-associated	ECM-affiliated Proteins	FCN1
+Matrisome-associated	ECM-affiliated Proteins	FCN2
+Matrisome-associated	ECM-affiliated Proteins	FCN3
+Matrisome-associated	ECM-affiliated Proteins	FREM1
+Matrisome-associated	ECM-affiliated Proteins	FREM2
+Matrisome-associated	ECM-affiliated Proteins	FREM3
+Matrisome-associated	ECM-affiliated Proteins	GPC1
+Matrisome-associated	ECM-affiliated Proteins	GPC2
+Matrisome-associated	ECM-affiliated Proteins	GPC3
+Matrisome-associated	ECM-affiliated Proteins	GPC4
+Matrisome-associated	ECM-affiliated Proteins	GPC5
+Matrisome-associated	ECM-affiliated Proteins	GPC6
+Matrisome-associated	ECM-affiliated Proteins	GREM1
+Matrisome-associated	ECM-affiliated Proteins	GRIFIN
+Matrisome-associated	ECM-affiliated Proteins	HPX
+Matrisome-associated	ECM-affiliated Proteins	HSPC159
+Matrisome-associated	ECM-affiliated Proteins	ITLN1
+Matrisome-associated	ECM-affiliated Proteins	ITLN2
+Matrisome-associated	ECM-affiliated Proteins	LGALS1
+Matrisome-associated	ECM-affiliated Proteins	LGALS12
+Matrisome-associated	ECM-affiliated Proteins	LGALS13
+Matrisome-associated	ECM-affiliated Proteins	LGALS14
+Matrisome-associated	ECM-affiliated Proteins	LGALS16
+Matrisome-associated	ECM-affiliated Proteins	LGALS2
+Matrisome-associated	ECM-affiliated Proteins	LGALS3
+Matrisome-associated	ECM-affiliated Proteins	LGALS4
+Matrisome-associated	ECM-affiliated Proteins	LGALS7
+Matrisome-associated	ECM-affiliated Proteins	LGALS8
+Matrisome-associated	ECM-affiliated Proteins	LGALS9
+Matrisome-associated	ECM-affiliated Proteins	LGALS9B
+Matrisome-associated	ECM-affiliated Proteins	LGALS9C
+Matrisome-associated	ECM-affiliated Proteins	LMAN1
+Matrisome-associated	ECM-affiliated Proteins	LMAN1L
+Matrisome-associated	ECM-affiliated Proteins	MBL2
+Matrisome-associated	ECM-affiliated Proteins	MUC1
+Matrisome-associated	ECM-affiliated Proteins	MUC12
+Matrisome-associated	ECM-affiliated Proteins	MUC13
+Matrisome-associated	ECM-affiliated Proteins	MUC15
+Matrisome-associated	ECM-affiliated Proteins	MUC16
+Matrisome-associated	ECM-affiliated Proteins	MUC17
+Matrisome-associated	ECM-affiliated Proteins	MUC19
+Matrisome-associated	ECM-affiliated Proteins	MUC2
+Matrisome-associated	ECM-affiliated Proteins	MUC20
+Matrisome-associated	ECM-affiliated Proteins	MUC21
+Matrisome-associated	ECM-affiliated Proteins	MUC22
+Matrisome-associated	ECM-affiliated Proteins	MUC3A
+Matrisome-associated	ECM-affiliated Proteins	MUC4
+Matrisome-associated	ECM-affiliated Proteins	MUC5AC
+Matrisome-associated	ECM-affiliated Proteins	MUC5B
+Matrisome-associated	ECM-affiliated Proteins	MUC6
+Matrisome-associated	ECM-affiliated Proteins	MUC7
+Matrisome-associated	ECM-affiliated Proteins	MUC8
+Matrisome-associated	ECM-affiliated Proteins	MUCL1
+Matrisome-associated	ECM-affiliated Proteins	OVGP1
+Matrisome-associated	ECM-affiliated Proteins	PARM1
+Matrisome-associated	ECM-affiliated Proteins	PLXDC1
+Matrisome-associated	ECM-affiliated Proteins	PLXDC2
+Matrisome-associated	ECM-affiliated Proteins	PLXNA1
+Matrisome-associated	ECM-affiliated Proteins	PLXNA2
+Matrisome-associated	ECM-affiliated Proteins	PLXNA3
+Matrisome-associated	ECM-affiliated Proteins	PLXNA4
+Matrisome-associated	ECM-affiliated Proteins	PLXNB1
+Matrisome-associated	ECM-affiliated Proteins	PLXNB2
+Matrisome-associated	ECM-affiliated Proteins	PLXNB3
+Matrisome-associated	ECM-affiliated Proteins	PLXNC1
+Matrisome-associated	ECM-affiliated Proteins	PLXND1
+Matrisome-associated	ECM-affiliated Proteins	PROL1
+Matrisome-associated	ECM-affiliated Proteins	REG1A
+Matrisome-associated	ECM-affiliated Proteins	REG1B
+Matrisome-associated	ECM-affiliated Proteins	REG3A
+Matrisome-associated	ECM-affiliated Proteins	REG3G
+Matrisome-associated	ECM-affiliated Proteins	REG4
+Matrisome-associated	ECM-affiliated Proteins	SDC1
+Matrisome-associated	ECM-affiliated Proteins	SDC2
+Matrisome-associated	ECM-affiliated Proteins	SDC3
+Matrisome-associated	ECM-affiliated Proteins	SDC4
+Matrisome-associated	ECM-affiliated Proteins	SEMA3A
+Matrisome-associated	ECM-affiliated Proteins	SEMA3B
+Matrisome-associated	ECM-affiliated Proteins	SEMA3C
+Matrisome-associated	ECM-affiliated Proteins	SEMA3D
+Matrisome-associated	ECM-affiliated Proteins	SEMA3E
+Matrisome-associated	ECM-affiliated Proteins	SEMA3F
+Matrisome-associated	ECM-affiliated Proteins	SEMA3G
+Matrisome-associated	ECM-affiliated Proteins	SEMA4A
+Matrisome-associated	ECM-affiliated Proteins	SEMA4B
+Matrisome-associated	ECM-affiliated Proteins	SEMA4C
+Matrisome-associated	ECM-affiliated Proteins	SEMA4D
+Matrisome-associated	ECM-affiliated Proteins	SEMA4F
+Matrisome-associated	ECM-affiliated Proteins	SEMA4G
+Matrisome-associated	ECM-affiliated Proteins	SEMA5A
+Matrisome-associated	ECM-affiliated Proteins	SEMA5B
+Matrisome-associated	ECM-affiliated Proteins	SEMA6A
+Matrisome-associated	ECM-affiliated Proteins	SEMA6B
+Matrisome-associated	ECM-affiliated Proteins	SEMA6C
+Matrisome-associated	ECM-affiliated Proteins	SEMA6D
+Matrisome-associated	ECM-affiliated Proteins	SEMA7A
+Matrisome-associated	ECM-affiliated Proteins	SFTA2
+Matrisome-associated	ECM-affiliated Proteins	SFTA3
+Matrisome-associated	ECM-affiliated Proteins	SFTPA1
+Matrisome-associated	ECM-affiliated Proteins	SFTPA2
+Matrisome-associated	ECM-affiliated Proteins	SFTPB
+Matrisome-associated	ECM-affiliated Proteins	SFTPC
+Matrisome-associated	ECM-affiliated Proteins	SFTPD
+Matrisome-associated	ECM Regulators	A2M
+Matrisome-associated	ECM Regulators	A2ML1
+Matrisome-associated	ECM Regulators	ADAM10
+Matrisome-associated	ECM Regulators	ADAM11
+Matrisome-associated	ECM Regulators	ADAM12
+Matrisome-associated	ECM Regulators	ADAM15
+Matrisome-associated	ECM Regulators	ADAM17
+Matrisome-associated	ECM Regulators	ADAM18
+Matrisome-associated	ECM Regulators	ADAM19
+Matrisome-associated	ECM Regulators	ADAM2
+Matrisome-associated	ECM Regulators	ADAM20
+Matrisome-associated	ECM Regulators	ADAM21
+Matrisome-associated	ECM Regulators	ADAM22
+Matrisome-associated	ECM Regulators	ADAM23
+Matrisome-associated	ECM Regulators	ADAM28
+Matrisome-associated	ECM Regulators	ADAM29
+Matrisome-associated	ECM Regulators	ADAM30
+Matrisome-associated	ECM Regulators	ADAM32
+Matrisome-associated	ECM Regulators	ADAM33
+Matrisome-associated	ECM Regulators	ADAM7
+Matrisome-associated	ECM Regulators	ADAM8
+Matrisome-associated	ECM Regulators	ADAM9
+Matrisome-associated	ECM Regulators	ADAMDEC1
+Matrisome-associated	ECM Regulators	ADAMTS1
+Matrisome-associated	ECM Regulators	ADAMTS10
+Matrisome-associated	ECM Regulators	ADAMTS12
+Matrisome-associated	ECM Regulators	ADAMTS13
+Matrisome-associated	ECM Regulators	ADAMTS14
+Matrisome-associated	ECM Regulators	ADAMTS15
+Matrisome-associated	ECM Regulators	ADAMTS16
+Matrisome-associated	ECM Regulators	ADAMTS17
+Matrisome-associated	ECM Regulators	ADAMTS18
+Matrisome-associated	ECM Regulators	ADAMTS19
+Matrisome-associated	ECM Regulators	ADAMTS2
+Matrisome-associated	ECM Regulators	ADAMTS20
+Matrisome-associated	ECM Regulators	ADAMTS3
+Matrisome-associated	ECM Regulators	ADAMTS4
+Matrisome-associated	ECM Regulators	ADAMTS5
+Matrisome-associated	ECM Regulators	ADAMTS6
+Matrisome-associated	ECM Regulators	ADAMTS7
+Matrisome-associated	ECM Regulators	ADAMTS8
+Matrisome-associated	ECM Regulators	ADAMTS9
+Matrisome-associated	ECM Regulators	ADAMTSL1
+Matrisome-associated	ECM Regulators	ADAMTSL2
+Matrisome-associated	ECM Regulators	ADAMTSL3
+Matrisome-associated	ECM Regulators	ADAMTSL4
+Matrisome-associated	ECM Regulators	ADAMTSL5
+Matrisome-associated	ECM Regulators	AGT
+Matrisome-associated	ECM Regulators	AMBP
+Matrisome-associated	ECM Regulators	ASTL
+Matrisome-associated	ECM Regulators	BMP1
+Matrisome-associated	ECM Regulators	C17orf58
+Matrisome-associated	ECM Regulators	CD109
+Matrisome-associated	ECM Regulators	CELA1
+Matrisome-associated	ECM Regulators	CELA2A
+Matrisome-associated	ECM Regulators	CELA2B
+Matrisome-associated	ECM Regulators	CELA3A
+Matrisome-associated	ECM Regulators	CELA3B
+Matrisome-associated	ECM Regulators	CPAMD8
+Matrisome-associated	ECM Regulators	CPN2
+Matrisome-associated	ECM Regulators	CST1
+Matrisome-associated	ECM Regulators	CST11
+Matrisome-associated	ECM Regulators	CST2
+Matrisome-associated	ECM Regulators	CST3
+Matrisome-associated	ECM Regulators	CST4
+Matrisome-associated	ECM Regulators	CST5
+Matrisome-associated	ECM Regulators	CST6
+Matrisome-associated	ECM Regulators	CST7
+Matrisome-associated	ECM Regulators	CST8
+Matrisome-associated	ECM Regulators	CST9
+Matrisome-associated	ECM Regulators	CST9L
+Matrisome-associated	ECM Regulators	CSTA
+Matrisome-associated	ECM Regulators	CSTB
+Matrisome-associated	ECM Regulators	CSTL1
+Matrisome-associated	ECM Regulators	CTSA
+Matrisome-associated	ECM Regulators	CTSB
+Matrisome-associated	ECM Regulators	CTSC
+Matrisome-associated	ECM Regulators	CTSD
+Matrisome-associated	ECM Regulators	CTSE
+Matrisome-associated	ECM Regulators	CTSF
+Matrisome-associated	ECM Regulators	CTSG
+Matrisome-associated	ECM Regulators	CTSH
+Matrisome-associated	ECM Regulators	CTSK
+Matrisome-associated	ECM Regulators	CTSL
+Matrisome-associated	ECM Regulators	CTSO
+Matrisome-associated	ECM Regulators	CTSS
+Matrisome-associated	ECM Regulators	CTSV
+Matrisome-associated	ECM Regulators	CTSW
+Matrisome-associated	ECM Regulators	CTSZ
+Matrisome-associated	ECM Regulators	EGLN1
+Matrisome-associated	ECM Regulators	EGLN2
+Matrisome-associated	ECM Regulators	EGLN3
+Matrisome-associated	ECM Regulators	ELANE
+Matrisome-associated	ECM Regulators	F10
+Matrisome-associated	ECM Regulators	F12
+Matrisome-associated	ECM Regulators	F13A1
+Matrisome-associated	ECM Regulators	F13B
+Matrisome-associated	ECM Regulators	F2
+Matrisome-associated	ECM Regulators	F7
+Matrisome-associated	ECM Regulators	F9
+Matrisome-associated	ECM Regulators	FAM20A
+Matrisome-associated	ECM Regulators	FAM20B
+Matrisome-associated	ECM Regulators	FAM20C
+Matrisome-associated	ECM Regulators	HABP2
+Matrisome-associated	ECM Regulators	HMSD
+Matrisome-associated	ECM Regulators	HPSE
+Matrisome-associated	ECM Regulators	HPSE2
+Matrisome-associated	ECM Regulators	HRG
+Matrisome-associated	ECM Regulators	HTRA1
+Matrisome-associated	ECM Regulators	HTRA3
+Matrisome-associated	ECM Regulators	HTRA4
+Matrisome-associated	ECM Regulators	HYAL1
+Matrisome-associated	ECM Regulators	HYAL2
+Matrisome-associated	ECM Regulators	HYAL3
+Matrisome-associated	ECM Regulators	HYAL4
+Matrisome-associated	ECM Regulators	ITIH1
+Matrisome-associated	ECM Regulators	ITIH2
+Matrisome-associated	ECM Regulators	ITIH3
+Matrisome-associated	ECM Regulators	ITIH4
+Matrisome-associated	ECM Regulators	ITIH5
+Matrisome-associated	ECM Regulators	ITIH6
+Matrisome-associated	ECM Regulators	KAZALD1
+Matrisome-associated	ECM Regulators	KNG1
+Matrisome-associated	ECM Regulators	KY
+Matrisome-associated	ECM Regulators	LEPRE1
+Matrisome-associated	ECM Regulators	LEPREL1
+Matrisome-associated	ECM Regulators	LEPREL2
+Matrisome-associated	ECM Regulators	LOX
+Matrisome-associated	ECM Regulators	LOXL1
+Matrisome-associated	ECM Regulators	LOXL2
+Matrisome-associated	ECM Regulators	LOXL3
+Matrisome-associated	ECM Regulators	LOXL4
+Matrisome-associated	ECM Regulators	LPA
+Matrisome-associated	ECM Regulators	MASP1
+Matrisome-associated	ECM Regulators	MASP2
+Matrisome-associated	ECM Regulators	MEP1A
+Matrisome-associated	ECM Regulators	MEP1B
+Matrisome-associated	ECM Regulators	MMP1
+Matrisome-associated	ECM Regulators	MMP10
+Matrisome-associated	ECM Regulators	MMP11
+Matrisome-associated	ECM Regulators	MMP12
+Matrisome-associated	ECM Regulators	MMP13
+Matrisome-associated	ECM Regulators	MMP14
+Matrisome-associated	ECM Regulators	MMP15
+Matrisome-associated	ECM Regulators	MMP16
+Matrisome-associated	ECM Regulators	MMP17
+Matrisome-associated	ECM Regulators	MMP19
+Matrisome-associated	ECM Regulators	MMP2
+Matrisome-associated	ECM Regulators	MMP20
+Matrisome-associated	ECM Regulators	MMP21
+Matrisome-associated	ECM Regulators	MMP23B
+Matrisome-associated	ECM Regulators	MMP24
+Matrisome-associated	ECM Regulators	MMP25
+Matrisome-associated	ECM Regulators	MMP26
+Matrisome-associated	ECM Regulators	MMP27
+Matrisome-associated	ECM Regulators	MMP28
+Matrisome-associated	ECM Regulators	MMP3
+Matrisome-associated	ECM Regulators	MMP7
+Matrisome-associated	ECM Regulators	MMP8
+Matrisome-associated	ECM Regulators	MMP9
+Matrisome-associated	ECM Regulators	NGLY1
+Matrisome-associated	ECM Regulators	OGFOD1
+Matrisome-associated	ECM Regulators	OGFOD2
+Matrisome-associated	ECM Regulators	P4HA1
+Matrisome-associated	ECM Regulators	P4HA2
+Matrisome-associated	ECM Regulators	P4HA3
+Matrisome-associated	ECM Regulators	P4HTM
+Matrisome-associated	ECM Regulators	PAMR1
+Matrisome-associated	ECM Regulators	PAPPA
+Matrisome-associated	ECM Regulators	PAPPA2
+Matrisome-associated	ECM Regulators	PCSK5
+Matrisome-associated	ECM Regulators	PCSK6
+Matrisome-associated	ECM Regulators	PI3
+Matrisome-associated	ECM Regulators	PLAT
+Matrisome-associated	ECM Regulators	PLAU
+Matrisome-associated	ECM Regulators	PLG
+Matrisome-associated	ECM Regulators	PLOD1
+Matrisome-associated	ECM Regulators	PLOD2
+Matrisome-associated	ECM Regulators	PLOD3
+Matrisome-associated	ECM Regulators	PRSS1
+Matrisome-associated	ECM Regulators	PRSS12
+Matrisome-associated	ECM Regulators	PRSS2
+Matrisome-associated	ECM Regulators	PRSS3
+Matrisome-associated	ECM Regulators	PZP
+Matrisome-associated	ECM Regulators	SERPINA1
+Matrisome-associated	ECM Regulators	SERPINA10
+Matrisome-associated	ECM Regulators	SERPINA11
+Matrisome-associated	ECM Regulators	SERPINA12
+Matrisome-associated	ECM Regulators	SERPINA2
+Matrisome-associated	ECM Regulators	SERPINA3
+Matrisome-associated	ECM Regulators	SERPINA4
+Matrisome-associated	ECM Regulators	SERPINA5
+Matrisome-associated	ECM Regulators	SERPINA6
+Matrisome-associated	ECM Regulators	SERPINA7
+Matrisome-associated	ECM Regulators	SERPINA9
+Matrisome-associated	ECM Regulators	SERPINB1
+Matrisome-associated	ECM Regulators	SERPINB10
+Matrisome-associated	ECM Regulators	SERPINB11
+Matrisome-associated	ECM Regulators	SERPINB12
+Matrisome-associated	ECM Regulators	SERPINB13
+Matrisome-associated	ECM Regulators	SERPINB2
+Matrisome-associated	ECM Regulators	SERPINB3
+Matrisome-associated	ECM Regulators	SERPINB4
+Matrisome-associated	ECM Regulators	SERPINB5
+Matrisome-associated	ECM Regulators	SERPINB6
+Matrisome-associated	ECM Regulators	SERPINB7
+Matrisome-associated	ECM Regulators	SERPINB8
+Matrisome-associated	ECM Regulators	SERPINB9
+Matrisome-associated	ECM Regulators	SERPINC1
+Matrisome-associated	ECM Regulators	SERPIND1
+Matrisome-associated	ECM Regulators	SERPINE1
+Matrisome-associated	ECM Regulators	SERPINE2
+Matrisome-associated	ECM Regulators	SERPINE3
+Matrisome-associated	ECM Regulators	SERPINF1
+Matrisome-associated	ECM Regulators	SERPINF2
+Matrisome-associated	ECM Regulators	SERPING1
+Matrisome-associated	ECM Regulators	SERPINH1
+Matrisome-associated	ECM Regulators	SERPINI1
+Matrisome-associated	ECM Regulators	SERPINI2
+Matrisome-associated	ECM Regulators	SLPI
+Matrisome-associated	ECM Regulators	SPAM1
+Matrisome-associated	ECM Regulators	ST14
+Matrisome-associated	ECM Regulators	SULF1
+Matrisome-associated	ECM Regulators	SULF2
+Matrisome-associated	ECM Regulators	TGM1
+Matrisome-associated	ECM Regulators	TGM2
+Matrisome-associated	ECM Regulators	TGM3
+Matrisome-associated	ECM Regulators	TGM4
+Matrisome-associated	ECM Regulators	TGM5
+Matrisome-associated	ECM Regulators	TGM6
+Matrisome-associated	ECM Regulators	TGM7
+Matrisome-associated	ECM Regulators	TIMP1
+Matrisome-associated	ECM Regulators	TIMP2
+Matrisome-associated	ECM Regulators	TIMP3
+Matrisome-associated	ECM Regulators	TIMP4
+Matrisome-associated	ECM Regulators	TLL1
+Matrisome-associated	ECM Regulators	TLL2
+Matrisome-associated	ECM Regulators	TMPRSS15
+Matrisome-associated	Secreted Factors	AMH
+Matrisome-associated	Secreted Factors	ANGPT1
+Matrisome-associated	Secreted Factors	ANGPT2
+Matrisome-associated	Secreted Factors	ANGPT4
+Matrisome-associated	Secreted Factors	ANGPTL1
+Matrisome-associated	Secreted Factors	ANGPTL2
+Matrisome-associated	Secreted Factors	ANGPTL3
+Matrisome-associated	Secreted Factors	ANGPTL4
+Matrisome-associated	Secreted Factors	ANGPTL5
+Matrisome-associated	Secreted Factors	ANGPTL6
+Matrisome-associated	Secreted Factors	ANGPTL7
+Matrisome-associated	Secreted Factors	AREG
+Matrisome-associated	Secreted Factors	ARTN
+Matrisome-associated	Secreted Factors	BDNF
+Matrisome-associated	Secreted Factors	BMP10
+Matrisome-associated	Secreted Factors	BMP15
+Matrisome-associated	Secreted Factors	BMP2
+Matrisome-associated	Secreted Factors	BMP3
+Matrisome-associated	Secreted Factors	BMP4
+Matrisome-associated	Secreted Factors	BMP5
+Matrisome-associated	Secreted Factors	BMP6
+Matrisome-associated	Secreted Factors	BMP7
+Matrisome-associated	Secreted Factors	BMP8A
+Matrisome-associated	Secreted Factors	BMP8B
+Matrisome-associated	Secreted Factors	BRINP2
+Matrisome-associated	Secreted Factors	BRINP3
+Matrisome-associated	Secreted Factors	BTC
+Matrisome-associated	Secreted Factors	C1QTNF9B
+Matrisome-associated	Secreted Factors	CBLN1
+Matrisome-associated	Secreted Factors	CBLN2
+Matrisome-associated	Secreted Factors	CBLN3
+Matrisome-associated	Secreted Factors	CBLN4
+Matrisome-associated	Secreted Factors	CCBE1
+Matrisome-associated	Secreted Factors	CCL1
+Matrisome-associated	Secreted Factors	CCL11
+Matrisome-associated	Secreted Factors	CCL13
+Matrisome-associated	Secreted Factors	CCL14
+Matrisome-associated	Secreted Factors	CCL15
+Matrisome-associated	Secreted Factors	CCL16
+Matrisome-associated	Secreted Factors	CCL17
+Matrisome-associated	Secreted Factors	CCL18
+Matrisome-associated	Secreted Factors	CCL19
+Matrisome-associated	Secreted Factors	CCL2
+Matrisome-associated	Secreted Factors	CCL20
+Matrisome-associated	Secreted Factors	CCL21
+Matrisome-associated	Secreted Factors	CCL22
+Matrisome-associated	Secreted Factors	CCL23
+Matrisome-associated	Secreted Factors	CCL24
+Matrisome-associated	Secreted Factors	CCL25
+Matrisome-associated	Secreted Factors	CCL26
+Matrisome-associated	Secreted Factors	CCL27
+Matrisome-associated	Secreted Factors	CCL28
+Matrisome-associated	Secreted Factors	CCL3
+Matrisome-associated	Secreted Factors	CCL3L3
+Matrisome-associated	Secreted Factors	CCL4
+Matrisome-associated	Secreted Factors	CCL4L1
+Matrisome-associated	Secreted Factors	CCL4L2
+Matrisome-associated	Secreted Factors	CCL5
+Matrisome-associated	Secreted Factors	CCL7
+Matrisome-associated	Secreted Factors	CCL8
+Matrisome-associated	Secreted Factors	CFC1
+Matrisome-associated	Secreted Factors	CFC1B
+Matrisome-associated	Secreted Factors	CHRD
+Matrisome-associated	Secreted Factors	CHRDL1
+Matrisome-associated	Secreted Factors	CHRDL2
+Matrisome-associated	Secreted Factors	CLCF1
+Matrisome-associated	Secreted Factors	CNTF
+Matrisome-associated	Secreted Factors	CRHBP
+Matrisome-associated	Secreted Factors	CRLF1
+Matrisome-associated	Secreted Factors	CRLF3
+Matrisome-associated	Secreted Factors	CRNN
+Matrisome-associated	Secreted Factors	CSF1
+Matrisome-associated	Secreted Factors	CSF2
+Matrisome-associated	Secreted Factors	CSF3
+Matrisome-associated	Secreted Factors	CSH1
+Matrisome-associated	Secreted Factors	CSH2
+Matrisome-associated	Secreted Factors	CSHL1
+Matrisome-associated	Secreted Factors	CTF1
+Matrisome-associated	Secreted Factors	CX3CL1
+Matrisome-associated	Secreted Factors	CXCL1
+Matrisome-associated	Secreted Factors	CXCL10
+Matrisome-associated	Secreted Factors	CXCL11
+Matrisome-associated	Secreted Factors	CXCL12
+Matrisome-associated	Secreted Factors	CXCL13
+Matrisome-associated	Secreted Factors	CXCL14
+Matrisome-associated	Secreted Factors	CXCL2
+Matrisome-associated	Secreted Factors	CXCL3
+Matrisome-associated	Secreted Factors	CXCL5
+Matrisome-associated	Secreted Factors	CXCL6
+Matrisome-associated	Secreted Factors	CXCL8
+Matrisome-associated	Secreted Factors	CXCL9
+Matrisome-associated	Secreted Factors	DHH
+Matrisome-associated	Secreted Factors	EBI3
+Matrisome-associated	Secreted Factors	EDA
+Matrisome-associated	Secreted Factors	EGF
+Matrisome-associated	Secreted Factors	EGFL6
+Matrisome-associated	Secreted Factors	EGFL7
+Matrisome-associated	Secreted Factors	EGFL8
+Matrisome-associated	Secreted Factors	EPGN
+Matrisome-associated	Secreted Factors	EPO
+Matrisome-associated	Secreted Factors	EREG
+Matrisome-associated	Secreted Factors	FASLG
+Matrisome-associated	Secreted Factors	FGF1
+Matrisome-associated	Secreted Factors	FGF10
+Matrisome-associated	Secreted Factors	FGF11
+Matrisome-associated	Secreted Factors	FGF12
+Matrisome-associated	Secreted Factors	FGF13
+Matrisome-associated	Secreted Factors	FGF14
+Matrisome-associated	Secreted Factors	FGF16
+Matrisome-associated	Secreted Factors	FGF17
+Matrisome-associated	Secreted Factors	FGF18
+Matrisome-associated	Secreted Factors	FGF19
+Matrisome-associated	Secreted Factors	FGF2
+Matrisome-associated	Secreted Factors	FGF20
+Matrisome-associated	Secreted Factors	FGF21
+Matrisome-associated	Secreted Factors	FGF22
+Matrisome-associated	Secreted Factors	FGF23
+Matrisome-associated	Secreted Factors	FGF3
+Matrisome-associated	Secreted Factors	FGF4
+Matrisome-associated	Secreted Factors	FGF5
+Matrisome-associated	Secreted Factors	FGF6
+Matrisome-associated	Secreted Factors	FGF7
+Matrisome-associated	Secreted Factors	FGF8
+Matrisome-associated	Secreted Factors	FGF9
+Matrisome-associated	Secreted Factors	FGFBP1
+Matrisome-associated	Secreted Factors	FGFBP2
+Matrisome-associated	Secreted Factors	FGFBP3
+Matrisome-associated	Secreted Factors	FIGF
+Matrisome-associated	Secreted Factors	FLG
+Matrisome-associated	Secreted Factors	FLG2
+Matrisome-associated	Secreted Factors	FLT3LG
+Matrisome-associated	Secreted Factors	FRZB
+Matrisome-associated	Secreted Factors	FST
+Matrisome-associated	Secreted Factors	FSTL1
+Matrisome-associated	Secreted Factors	FSTL3
+Matrisome-associated	Secreted Factors	GDF1
+Matrisome-associated	Secreted Factors	GDF10
+Matrisome-associated	Secreted Factors	GDF11
+Matrisome-associated	Secreted Factors	GDF15
+Matrisome-associated	Secreted Factors	GDF2
+Matrisome-associated	Secreted Factors	GDF3
+Matrisome-associated	Secreted Factors	GDF5
+Matrisome-associated	Secreted Factors	GDF6
+Matrisome-associated	Secreted Factors	GDF7
+Matrisome-associated	Secreted Factors	GDF9
+Matrisome-associated	Secreted Factors	GDNF
+Matrisome-associated	Secreted Factors	GH1
+Matrisome-associated	Secreted Factors	GH2
+Matrisome-associated	Secreted Factors	HBEGF
+Matrisome-associated	Secreted Factors	HCFC1
+Matrisome-associated	Secreted Factors	HCFC2
+Matrisome-associated	Secreted Factors	HGF
+Matrisome-associated	Secreted Factors	HGFAC
+Matrisome-associated	Secreted Factors	HHIP
+Matrisome-associated	Secreted Factors	HRNR
+Matrisome-associated	Secreted Factors	IFNA1
+Matrisome-associated	Secreted Factors	IFNA10
+Matrisome-associated	Secreted Factors	IFNA13
+Matrisome-associated	Secreted Factors	IFNA14
+Matrisome-associated	Secreted Factors	IFNA16
+Matrisome-associated	Secreted Factors	IFNA17
+Matrisome-associated	Secreted Factors	IFNA2
+Matrisome-associated	Secreted Factors	IFNA21
+Matrisome-associated	Secreted Factors	IFNA4
+Matrisome-associated	Secreted Factors	IFNA5
+Matrisome-associated	Secreted Factors	IFNA6
+Matrisome-associated	Secreted Factors	IFNA7
+Matrisome-associated	Secreted Factors	IFNA8
+Matrisome-associated	Secreted Factors	IFNB1
+Matrisome-associated	Secreted Factors	IFNE
+Matrisome-associated	Secreted Factors	IFNG
+Matrisome-associated	Secreted Factors	IFNK
+Matrisome-associated	Secreted Factors	IFNW1
+Matrisome-associated	Secreted Factors	IGF1
+Matrisome-associated	Secreted Factors	IGF2
+Matrisome-associated	Secreted Factors	IHH
+Matrisome-associated	Secreted Factors	IL10
+Matrisome-associated	Secreted Factors	IL11
+Matrisome-associated	Secreted Factors	IL12A
+Matrisome-associated	Secreted Factors	IL12B
+Matrisome-associated	Secreted Factors	IL13
+Matrisome-associated	Secreted Factors	IL15
+Matrisome-associated	Secreted Factors	IL16
+Matrisome-associated	Secreted Factors	IL17A
+Matrisome-associated	Secreted Factors	IL17B
+Matrisome-associated	Secreted Factors	IL17C
+Matrisome-associated	Secreted Factors	IL17D
+Matrisome-associated	Secreted Factors	IL17F
+Matrisome-associated	Secreted Factors	IL18
+Matrisome-associated	Secreted Factors	IL19
+Matrisome-associated	Secreted Factors	IL1A
+Matrisome-associated	Secreted Factors	IL1B
+Matrisome-associated	Secreted Factors	IL1F10
+Matrisome-associated	Secreted Factors	IL1F5
+Matrisome-associated	Secreted Factors	IL1F6
+Matrisome-associated	Secreted Factors	IL1F7
+Matrisome-associated	Secreted Factors	IL1F8
+Matrisome-associated	Secreted Factors	IL1F9
+Matrisome-associated	Secreted Factors	IL1RN
+Matrisome-associated	Secreted Factors	IL2
+Matrisome-associated	Secreted Factors	IL20
+Matrisome-associated	Secreted Factors	IL22
+Matrisome-associated	Secreted Factors	IL23A
+Matrisome-associated	Secreted Factors	IL24
+Matrisome-associated	Secreted Factors	IL25
+Matrisome-associated	Secreted Factors	IL26
+Matrisome-associated	Secreted Factors	IL3
+Matrisome-associated	Secreted Factors	IL34
+Matrisome-associated	Secreted Factors	IL4
+Matrisome-associated	Secreted Factors	IL5
+Matrisome-associated	Secreted Factors	IL6
+Matrisome-associated	Secreted Factors	IL7
+Matrisome-associated	Secreted Factors	IL9
+Matrisome-associated	Secreted Factors	INHA
+Matrisome-associated	Secreted Factors	INHBA
+Matrisome-associated	Secreted Factors	INHBB
+Matrisome-associated	Secreted Factors	INHBC
+Matrisome-associated	Secreted Factors	INHBE
+Matrisome-associated	Secreted Factors	INS
+Matrisome-associated	Secreted Factors	INS-IGF2
+Matrisome-associated	Secreted Factors	INSL3
+Matrisome-associated	Secreted Factors	INSL5
+Matrisome-associated	Secreted Factors	INSL6
+Matrisome-associated	Secreted Factors	ISM1
+Matrisome-associated	Secreted Factors	ISM2
+Matrisome-associated	Secreted Factors	KITLG
+Matrisome-associated	Secreted Factors	LEFTY1
+Matrisome-associated	Secreted Factors	LEFTY2
+Matrisome-associated	Secreted Factors	LEP
+Matrisome-associated	Secreted Factors	LIF
+Matrisome-associated	Secreted Factors	LTA
+Matrisome-associated	Secreted Factors	LTB
+Matrisome-associated	Secreted Factors	MDK
+Matrisome-associated	Secreted Factors	MEGF10
+Matrisome-associated	Secreted Factors	MEGF11
+Matrisome-associated	Secreted Factors	MEGF6
+Matrisome-associated	Secreted Factors	MEGF8
+Matrisome-associated	Secreted Factors	MEGF9
+Matrisome-associated	Secreted Factors	MST1
+Matrisome-associated	Secreted Factors	MST1L
+Matrisome-associated	Secreted Factors	MSTN
+Matrisome-associated	Secreted Factors	NGF
+Matrisome-associated	Secreted Factors	NODAL
+Matrisome-associated	Secreted Factors	NRG1
+Matrisome-associated	Secreted Factors	NRG2
+Matrisome-associated	Secreted Factors	NRG3
+Matrisome-associated	Secreted Factors	NRG4
+Matrisome-associated	Secreted Factors	NRTN
+Matrisome-associated	Secreted Factors	NTF3
+Matrisome-associated	Secreted Factors	NTF4
+Matrisome-associated	Secreted Factors	OSM
+Matrisome-associated	Secreted Factors	PDGFA
+Matrisome-associated	Secreted Factors	PDGFB
+Matrisome-associated	Secreted Factors	PDGFC
+Matrisome-associated	Secreted Factors	PDGFD
+Matrisome-associated	Secreted Factors	PF4
+Matrisome-associated	Secreted Factors	PF4V1
+Matrisome-associated	Secreted Factors	PGF
+Matrisome-associated	Secreted Factors	PIK3IP1
+Matrisome-associated	Secreted Factors	PPBP
+Matrisome-associated	Secreted Factors	PRL
+Matrisome-associated	Secreted Factors	PSPN
+Matrisome-associated	Secreted Factors	PTN
+Matrisome-associated	Secreted Factors	RPTN
+Matrisome-associated	Secreted Factors	S100A1
+Matrisome-associated	Secreted Factors	S100A10
+Matrisome-associated	Secreted Factors	S100A11
+Matrisome-associated	Secreted Factors	S100A12
+Matrisome-associated	Secreted Factors	S100A13
+Matrisome-associated	Secreted Factors	S100A14
+Matrisome-associated	Secreted Factors	S100A16
+Matrisome-associated	Secreted Factors	S100A2
+Matrisome-associated	Secreted Factors	S100A3
+Matrisome-associated	Secreted Factors	S100A4
+Matrisome-associated	Secreted Factors	S100A5
+Matrisome-associated	Secreted Factors	S100A6
+Matrisome-associated	Secreted Factors	S100A7
+Matrisome-associated	Secreted Factors	S100A7A
+Matrisome-associated	Secreted Factors	S100A7L2
+Matrisome-associated	Secreted Factors	S100A8
+Matrisome-associated	Secreted Factors	S100A9
+Matrisome-associated	Secreted Factors	S100B
+Matrisome-associated	Secreted Factors	S100G
+Matrisome-associated	Secreted Factors	S100P
+Matrisome-associated	Secreted Factors	S100Z
+Matrisome-associated	Secreted Factors	SCUBE1
+Matrisome-associated	Secreted Factors	SCUBE2
+Matrisome-associated	Secreted Factors	SCUBE3
+Matrisome-associated	Secreted Factors	SFRP1
+Matrisome-associated	Secreted Factors	SFRP2
+Matrisome-associated	Secreted Factors	SFRP4
+Matrisome-associated	Secreted Factors	SFRP5
+Matrisome-associated	Secreted Factors	SHH
+Matrisome-associated	Secreted Factors	TCHH
+Matrisome-associated	Secreted Factors	TCHHL1
+Matrisome-associated	Secreted Factors	TDGF1
+Matrisome-associated	Secreted Factors	TGFA
+Matrisome-associated	Secreted Factors	TGFB1
+Matrisome-associated	Secreted Factors	TGFB2
+Matrisome-associated	Secreted Factors	TGFB3
+Matrisome-associated	Secreted Factors	THPO
+Matrisome-associated	Secreted Factors	TNF
+Matrisome-associated	Secreted Factors	TNFSF10
+Matrisome-associated	Secreted Factors	TNFSF11
+Matrisome-associated	Secreted Factors	TNFSF12
+Matrisome-associated	Secreted Factors	TNFSF13
+Matrisome-associated	Secreted Factors	TNFSF13B
+Matrisome-associated	Secreted Factors	TNFSF14
+Matrisome-associated	Secreted Factors	TNFSF15
+Matrisome-associated	Secreted Factors	TNFSF18
+Matrisome-associated	Secreted Factors	TNFSF4
+Matrisome-associated	Secreted Factors	TNFSF8
+Matrisome-associated	Secreted Factors	TNFSF9
+Matrisome-associated	Secreted Factors	TPO
+Matrisome-associated	Secreted Factors	VEGFA
+Matrisome-associated	Secreted Factors	VEGFB
+Matrisome-associated	Secreted Factors	VEGFC
+Matrisome-associated	Secreted Factors	VWC2
+Matrisome-associated	Secreted Factors	VWC2L
+Matrisome-associated	Secreted Factors	WFIKKN1
+Matrisome-associated	Secreted Factors	WFIKKN2
+Matrisome-associated	Secreted Factors	WIF1
+Matrisome-associated	Secreted Factors	WNT1
+Matrisome-associated	Secreted Factors	WNT10A
+Matrisome-associated	Secreted Factors	WNT10B
+Matrisome-associated	Secreted Factors	WNT11
+Matrisome-associated	Secreted Factors	WNT16
+Matrisome-associated	Secreted Factors	WNT2
+Matrisome-associated	Secreted Factors	WNT2B
+Matrisome-associated	Secreted Factors	WNT3
+Matrisome-associated	Secreted Factors	WNT3A
+Matrisome-associated	Secreted Factors	WNT4
+Matrisome-associated	Secreted Factors	WNT5A
+Matrisome-associated	Secreted Factors	WNT5B
+Matrisome-associated	Secreted Factors	WNT6
+Matrisome-associated	Secreted Factors	WNT7A
+Matrisome-associated	Secreted Factors	WNT7B
+Matrisome-associated	Secreted Factors	WNT8A
+Matrisome-associated	Secreted Factors	WNT8B
+Matrisome-associated	Secreted Factors	WNT9A
+Matrisome-associated	Secreted Factors	WNT9B
+Matrisome-associated	Secreted Factors	XCL1
+Matrisome-associated	Secreted Factors	XCL2
+Matrisome-associated	Secreted Factors	ZFP91
