@@ -1,0 +1,10 @@
+en1	iTU	Epithelial	Injured Tubular Epithelial	Injured Tubular Epithelial
+en10	MF1	Mesenchymal	Myofibroblasts	Myofibroblasts 3b
+en11	MF2	Mesenchymal	Myofibroblasts	Myofibroblasts 4
+en12	MF3	Mesenchymal	Myofibroblasts	Myofibroblasts 1
+en2	MF4	Mesenchymal	Myofibroblasts	Myofibroblasts 3a
+en4	DC	Immune	Dendritic Cells	Dendritic Cells
+en5	MF5	Mesenchymal	Myofibroblasts	Myofibroblasts 2
+en6	Fi2	Mesenchymal	Fibroblasts	Fibroblast 2
+en7	MF6	Mesenchymal	Myofibroblasts	Myofibrobalsts 3c
+en8	GE2	Endothelial	Glomerular Capillaries	Glomerular Capillaries 2
