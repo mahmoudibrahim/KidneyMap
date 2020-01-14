@@ -41,10 +41,6 @@ suppressPackageStartupMessages(library(mclust))
 #custom functions
 source("https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/.customlib.r")
 
-#general color palette
-col_palette = c("#d64e3c","#7dd554","#8641c6","#cfca45","#7778cb","#59803d","#d04d9c","#73d6a8","#492f60","#ccc497","#7f343b","#72acc0","#b97d40","#c796b5","#45483a","purple","green","yellow")
-col_palette_trans = makeTransparent(col_palette, alpha = 0.5)
-
 
 #define color scheme
 level1_col = c("#42006a","#9A6324")
@@ -116,8 +112,8 @@ names_v = rownames(cv[mcut,])
 mat_v = as.matrix(exp[which(rownames(exp) %in% names_v),])
 q = t(mat_v)
 q = t(apply(q,1, function(x) x-mean(x)))
-ss = svd(q)
-d = ss$d
+sv = svd(q)
+d = sv$d
 d2 =  d^2 / (sum(d^2))
 
 
@@ -141,20 +137,20 @@ dw = 1:dw
 
 
 pdf("SVD_clusterColor.pdf")
-plot(ss$u, col = as.factor(kidney_mesen_metadata$Clustering), pch = 16)
+plot(sv$u, col = as.factor(kidney_mesen_metadata$Clustering), pch = 16)
 dev.off()
 pdf("SVD_timeColor.pdf")
-plot(ss$u, col = as.factor(kidney_mesen_metadata$Timepoint), pch = 16)
+plot(sv$u, col = as.factor(kidney_mesen_metadata$Timepoint), pch = 16)
 dev.off()
-temp = t(apply(ss$u[,dw], 1, function(x) x / (sqrt(sum(x^2)))))
+temp = t(apply(sv$u[,dw], 1, function(x) x / (sqrt(sum(x^2)))))
 write.csv(temp, file = "mouse_PDGFRBpositive_dims.txt", row.names = FALSE, col.names = FALSE) #file saved @https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/reducedDims/SVD/mouse_PDGFRBpositive_dims.txt
 
 
 #clustering
-allInd = 1:nrow(ss$u)
-kk = floor(sqrt(nrow(ss$u)) * 1) * nrow(ss$u)
+allInd = 1:nrow(sv$u)
+kk = floor(sqrt(nrow(sv$u)) * 1) * nrow(sv$u)
 set.seed(111)
-kn = nn2(data = temp, k = ceiling((kk*1) / nrow(ss$u)), searchtype = "priority", treetype = "bd")
+kn = nn2(data = temp, k = ceiling((kk*1) / nrow(sv$u)), searchtype = "priority", treetype = "bd")
 kn = data.frame(node2 = as.vector(kn$nn.idx[,-1]), node1 = rep(kn$nn.idx[,1], ncol(kn$nn.idx) - 1), sim = 1 / (1+as.vector(kn$nn.dists[,-1])))
 cut = min(head(sort(kn$sim, decreasing = TRUE), n = kk))
 kn$sim2 = kn$sim
@@ -209,8 +205,8 @@ l_v = exp[mcut,] #highly variable genes are the gene markers from Iteration 1
 
 q = t(l_v)
 q = t(apply(q,1, function(x) x-mean(x)))
-ss = svd(q)
-d = ss$d
+sv = svd(q)
+d = sv$d
 d2 =  d^2 / (sum(d^2))
 
 #take the knee
@@ -230,17 +226,17 @@ lines(rep(dw, 1000), seq(0,10000,length.out = 1000), col = "red", lty = 2)
 zzz = dev.off()
 dw = 1:dw
 
-temp = t(apply(ss$u[,dw], 1, function(x) x / (sqrt(sum(x^2)))))
+temp = t(apply(sv$u[,dw], 1, function(x) x / (sqrt(sum(x^2)))))
 write.csv(temp, file = "mouse_PDGFRBpositive_dims_take2.txt", row.names = FALSE, col.names = FALSE) #file saved @https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/reducedDims/SVD/mouse_PDGFRBpositive_dims_take2.txt
 
 
 
 #clustering
-allInd = 1:nrow(ss$u)
-kk = floor(sqrt(nrow(ss$u)) * 1) * nrow(ss$u)
+allInd = 1:nrow(sv$u)
+kk = floor(sqrt(nrow(sv$u)) * 1) * nrow(sv$u)
 
 set.seed(111)
-kn = nn2(data = temp, k = ceiling((kk*1) / nrow(ss$u)), searchtype = "priority", treetype = "bd")
+kn = nn2(data = temp, k = ceiling((kk*1) / nrow(sv$u)), searchtype = "priority", treetype = "bd")
 kn = data.frame(node2 = as.vector(kn$nn.idx[,-1]), node1 = rep(kn$nn.idx[,1], ncol(kn$nn.idx) - 1), sim = 1 / (1+as.vector(kn$nn.dists[,-1])))
 cut = min(head(sort(kn$sim, decreasing = TRUE), n = kk))
 kn$sim2 = kn$sim

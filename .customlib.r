@@ -1,3 +1,26 @@
+########################################################################
+# .customlib.r
+#
+# Copyright (C) 2019-2020  Mahmoud M Ibrahim
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# Contact: mmibrahim@pm.me (Mahmoud M Ibrahim)
+########################################################################
+
+
+#custom functions
 makeTransparent = function(..., alpha=0.5) {
 	alpha = floor(255*alpha)  
 	newColor = col2rgb(col=unlist(list(...)), alpha=FALSE)
@@ -69,3 +92,12 @@ dist2d = function(a,b,c) {
 	d = abs(det(m))/sqrt(sum(v1*v1))
 	return(d)
 }
+
+
+
+#general color palette
+col_palette = c("#d64e3c","#7dd554","#8641c6","#cfca45","#7778cb","#59803d","#d04d9c","#73d6a8","#492f60","#ccc497","#7f343b","#72acc0","#b97d40","#c796b5","#45483a","purple","green","yellow")
+col_palette_trans = makeTransparent(col_palette, alpha = 0.5)
+
+col_palette_short = c("#999999","#56B4E9","#009E73","#0072B2")
+col_palette_short_trans = makeTransparent(col_palette_short, alpha = 0.4)
