@@ -279,7 +279,7 @@ write.csv(temp, file = paste0(prefix, "dims.txt"), row.names = FALSE, col.names 
 #UMAP (produced in python, just for visualization, independent of clustering)
 mapCoords = read.table("https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/reducedDims/UMAP/human_PDGFRBpositive_umapCoords.csv", header = FALSE, sep=",")
 
-pdf(paste0(prefix, "superUMAP_level1_level3TEXT.pdf"))
+pdf(paste0(prefix, "UMAP_level1_level3TEXT.pdf"))
 plot(mapCoords[,1], mapCoords[,2], pch = 20, col = colors_info_level1, cex = 0.3)
 allClasses = unique(l_remove$level3)
 for (i in 1:length(allClasses)) {
@@ -289,10 +289,10 @@ for (i in 1:length(allClasses)) {
 	text(xx,yy,allClasses[i], cex = 0.4, adj = 0.5)
 }
 dev.off()
-pdf(paste0(prefix, "superUMAP_KF.pdf"))
+pdf(paste0(prefix, "UMAP_KF.pdf"))
 plot(mapCoords[,1], mapCoords[,2], pch = 20, col = colors_info_kf, cex = 0.3, xlim = c(-7,15))
 dev.off()
-pdf(paste0(prefix, "superUMAP_fileID.pdf"))
+pdf(paste0(prefix, "UMAP_fileID.pdf"))
 plot(mapCoords[,1], mapCoords[,2], pch = 20, col = colors_file, cex = 0.3)
 legend(min(mapCoords[,1]) + 1, min(mapCoords[,2]) + 15, legend = abbreviate(unique(l_remove$fileID), minlength=6), pch=21, col = col_palette, pt.bg = col_palette_trans, pt.cex=2, cex=.8, bty="n", ncol = ceiling(length(unique(l_remove$fileID)) / 10))
 dev.off()
@@ -471,7 +471,8 @@ dev.off()
 
 
 
-#library(destiny) 
+########diffusion map based
+library(destiny) 
 set.seed(111)
 df = DiffusionMap(ss$u[,dw], k = 40, n_eigs = 3) 
 write.csv(df@eigenvectors, file = paste0(prefix, "dims_diffusionmap.txt"), row.names = FALSE, col.names = FALSE) #file now saved @https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/reducedDims/DM/human_PDGFRBpositive_dm.txt

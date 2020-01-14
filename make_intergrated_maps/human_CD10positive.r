@@ -83,7 +83,7 @@ l = l[choose_genes, ]
 
 
 
-###first stuff [merging similar clusters]
+#first stuff [merging similar clusters]
 sg = sortGenes(counts(l), colData(l)$class_info, binarizeMethod="naive", cores = 16)
 write.files(sg, prefix = paste0(prefix, "genesorteRouts_noMerging_noRemove"))
 marks = plotTopMarkerHeat(sg, top_n=100, plotheat=FALSE, outs = TRUE)
@@ -289,7 +289,7 @@ for (i in 1:length(unique(l_remove$patientID))) {
 
 
 
-#make network for UMAP visualization
+#start reducing dimensions (norm. expression)
 sg = sortGenes(counts(l_remove), class_info_merging_remove, binarizeMethod = "naive", cores = 16)
 pp = getPValues(sg, numPerm = 20, cores = 16)
 l_remove = scran::computeSumFactors(l_remove, sizes = seq(10, 200, 20), clusters = class_info_merging_remove, positive = TRUE)
