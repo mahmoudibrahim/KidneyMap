@@ -49,11 +49,11 @@ species = "human" #"human" or "mouse"
 
 
 if (species == "human") {
-	rRNA = "/data/hg38/rRNA_gencode29_geneNames.txt"
-	mtRNA = "/data/hg38/mtRNA_gencode29_geneNames.txt"
+	rRNA = "https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/public/gencode/rRNA_gencode29_geneNames.txt"
+	mtRNA = "https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/public/gencode/mtRNA_gencode29_geneNames.txt"
 } else if (species == "mouse") {
-	rRNA = "/data/mm10/rrnanames.gencode.vM20.txt"
-	mtRNA = "/data/mm10/chrMnames.gencode.vM20.txt"
+	rRNA = "https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/public/gencode/rrnanames.gencode.vM20.txt"
+	mtRNA = "https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/public/gencode/chrMnames.gencode.vM20.txt"
 }
 
 
@@ -388,7 +388,7 @@ zzz = dev.off()
 
 
 
-#Supervised assignment to epithelial, endothelial, immune, mesenchymal and neuronal (rather ad hoc, some manual checking is still done and some assignments are corrected)
+#Supervised assignment of clusters to epithelial, endothelial, immune, mesenchymal and neuronal (rather ad hoc, some manual checking is still done and some assignments are corrected)
 library(genesorteR)
 if (any(table(class_info) == 1)) {
 	www = which(table(class_info) == 1)
