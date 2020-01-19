@@ -445,9 +445,88 @@ tube_marks = c(tube_marks, "ENSG00000026025.15;VIM")
 plotMarkerHeat(logcounts(l_v), l_v$level3, markers = unique(unlist(tube_marks)), clusterGenes=TRUE, gaps = TRUE, averageCells=10^2, clusterGenesK=3, colors = colorRampPalette(c("cornflowerblue","black","gold"))(n=100))
 dev.off()
 
-##########################################################################
-###################################PSEUDOTIME#############################
-##########################################################################
+
+
+#mesenchymal lineage map
+ww = c(which(l_remove$level2 %in% c("Fibroblast", "Myofibroblast","Pericytes")))
+l_v = l_remove[,ww]
+sg_mesen = sortGenes(counts(l_v), l_v$level3, binarizeMethod="naive", cores = 16)
+pp_mesen = getPValues(sg_mesen, numPerm = 20, cores = 16)
+marker_mesen = names(which(apply(pp_mesen$adjpval, 1, function(x) any(x < 0.05))))
+l_v = scran::computeSumFactors(l_v, sizes = seq(10, 200, 20), clusters = l_v$level3, positive = TRUE)
+l_v = scater::normalize(l_v)
+l_v = scater::calculateQCMetrics(l_v)
+a = plotExprsFreqVsMean(l_v)
+
+
+#MNN batch effect correction
+kk = floor(sqrt(ncol(l_v)) * 1) * ncol(l_v)
+newOrder = order(table(l_v$fileID), decreasing = TRUE)
+var_genes = marker_mesen
+mnn = mnnCorrect(as.matrix(logcounts(l_v[,which(l_v$fileID == (unique(l_v$fileID)[1]))])), as.matrix(logcounts(l_v[,which(l_v$fileID == (unique(l_v$fileID)[2]))])), as.matrix(logcounts(l_v[,which(l_v$fileID == (unique(l_v$fileID)[3]))])), as.matrix(logcounts(l_v[,which(l_v$fileID == (unique(l_v$fileID)[4]))])), as.matrix(logcounts(l_v[,which(l_v$fileID == (unique(l_v$fileID)[5]))])), as.matrix(logcounts(l_v[,which(l_v$fileID == (unique(l_v$fileID)[6]))])), as.matrix(logcounts(l_v[,which(l_v$fileID == (unique(l_v$fileID)[7]))])), as.matrix(logcounts(l_v[,which(l_v$fileID == (unique(l_v$fileID)[8]))])), k = floor(sqrt(ncol(l_v)) * 1), subset.row=var_genes, cos.norm.out=FALSE, order = newOrder, cos.norm.in=TRUE)
+l_bc = cbind(mnn$corrected[[1]], mnn$corrected[[2]], mnn$corrected[[3]], mnn$corrected[[4]], mnn$corrected[[5]], mnn$corrected[[6]], mnn$corrected[[7]], mnn$corrected[[8]])
+l_bc = SingleCellExperiment(assays=list(logcounts=l_bc))
+l_bc$colData = l_v$colData
+
+q = t(logcounts(l_bc[which(rownames(l_bc) %in% marker_mesen),]))
+q = t(apply(q,1, function(x) x-mean(x)))
+ss = svd(q)
+d = ss$d
+xx = 1:1000
+yy = d[1:1000]
+p1 = c(xx[1],yy[1])
+p2 = c(xx[length(xx)], yy[length(yy)])
+dw = which.max(sapply(1:length(yy), function(x) dist2d(c(xx[x], yy[x]), p1, p2)))
+dw = 1:dw
+temp = t(apply(ss$u[,dw], 1, function(x) x / (sqrt(sum(x^2))))) #norm based normalization
+write.csv(temp, file = paste0(prefix, "dims_mesenchymal.txt"), row.names = FALSE, col.names = FALSE) #this file is saved at reducedDims/SVD/
+
+mapCoords = read.table("https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/reducedDims/UMAP/human_CD10negative_mesenchymal_umapCoords.csv", header = FALSE, sep=",") #learned in python
+colors_info_mesenl3 = rep("", length = ncol(l_v))
+for (i in 1:length(unique(l_v$level3))) {
+	wtemp = which(l_v$level3 == (sort(unique(l_v$level3)))[i])
+	colors_info_mesenl3[wtemp] = col_palette_trans[i]
+}
+colors_info_mesenl2 = rep("", length = ncol(l_v))
+for (i in 1:length(unique(l_v$level2))) {
+	wtemp = which(l_v$level2 == (sort(unique(l_v$level2)))[i])
+	colors_info_mesenl2[wtemp] = col_palette_trans[i]
+}
+colors_info_patient = rep("", length = ncol(l_v))
+for (i in 1:length(unique(l_v$patientID))) {
+	wtemp = which((l_v$patientID) == (sort(unique(l_v$patientID)))[i])
+	colors_info_patient[wtemp] = col_palette_trans[i]
+}
+pdf(paste0(prefix, "mesenchymal_specific_umap_level3.pdf"))
+plot(mapCoords, col = colors_info_mesenl3, pch = 20)
+legend(max(mapCoords[,1]) - 5, min(mapCoords[,2]) + 6, legend = sort(unique(l_v$level3)), pch=21, col = col_palette_trans, pt.bg = col_palette, pt.cex=2, cex=.8, bty="n", ncol = ceiling(length(unique(l_v$level3)) / 20))
+dev.off()
+pdf(paste0(prefix, "mesenchymal_specific_umap_level2.pdf"))
+plot(mapCoords, col = colors_info_mesenl2, pch = 20)
+legend(max(mapCoords[,1]) - 5, min(mapCoords[,2]) + 6, legend = sort(unique(l_v$level2)), pch=21, col = col_palette_trans, pt.bg = col_palette, pt.cex=2, cex=.8, bty="n", ncol = ceiling(length(unique(l_v$level2)) / 4))
+dev.off()
+pdf(paste0(prefix, "mesenchymal_specific_umap_patient.pdf"))
+plot(mapCoords, col = colors_info_patient, pch = 20)
+legend(max(mapCoords[,1]) - 4, min(mapCoords[,2]) + 6, legend = abbreviate(unique(l_v$patientID), minlength=6), pch=21, col = col_palette, pt.bg = col_palette_trans, pt.cex=2, cex=.8, bty="n", ncol = ceiling(length(unique(l_v$patientID)) / 10))
+dev.off()
+pdf(paste0(prefix, "mesenchymal_specific_umap_ECMscore.pdf"))
+plot(mapCoords, col = color.gradient(scale(aaa[ww]), colors = c("#ECECEC50",rev(c("#d7191c","#abdda4")))), pch = 20)
+dev.off()
+
+library(slingshot)
+sl = slingshot(mapCoords, l_v$level3, end.clus = "Myofibroblast 1")
+pdf(paste0(prefix, "mesenchymal_specific_umap_level2_lineageCurves.pdf"))
+plot(mapCoords, col = colors_info_mesenl2, pch = 20)
+pst = rep(NA, nrow(mapCoords))
+lines(sl, lwd=5, col="#00000095", type = "lineages")
+dev.off()
+pdf(paste0(prefix, "mesenchymal_specific_umap_level3_lineageCurves.pdf"))
+plot(mapCoords, col = colors_info_mesenl3, pch = 20)
+lines(sl, lwd=6, col="#00000095", type = "lineages")
+dev.off()
+
+
+
 
 
 #diff exp (fibroblast)
