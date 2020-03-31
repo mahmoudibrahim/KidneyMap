@@ -565,4 +565,24 @@ legend("topright", legend = colnames(cycle_tab), pch=15, col = c("#999999","#56B
 dev.off()
 
 
+
+##time analysis
+timing = rep(0,ncol(exp))
+timing[which(kidney_mesen_metadata$Timepoint == "Uninjured")] = 0
+timing[which(kidney_mesen_metadata$Timepoint == "Day 2 UUO")] = 2
+timing[which(kidney_mesen_metadata$Timepoint == "Day 10 UUO")] = 10
+
+time_test = list() #simple correlation with time to identify some genes
+for (i in 1:length(unique(class_info))) {
+	negSel = which(class_info == unique(class_info)[i])
+	set.seed(111)
+	time_test1 = apply(exp[,negSel], 1, function(x) if (length(x[x!=0]) > 5) {cor.test(x, timing[negSel], method = "spearman", exact = FALSE)$p.value} else {1})
+	time_test[[i]] = which(p.adjust(time_test1, method = "BH") < 0.001)
+}
+pdf("time_genes_myofibroblastOnly.pdf")
+plotMarkerHeat(exp[,which(class_info == 10)], timing[which(class_info == 10)], names(time_test[[10]]), clusterGenes = T, clusterGenesK = 2, averageCells=5, colors = colorRampPalette(c("cornflowerblue","black","gold"))(n=100))
+dev.off()
+
+
+
 ##Fin
