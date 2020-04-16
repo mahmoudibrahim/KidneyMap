@@ -1,0 +1,85 @@
+---
+title: "Get amapping table of orthologs between mouse and human"
+author: "Javier Perales-Paton - javier.perales@bioquant.uni-heidelberg.de"
+output: github_document
+---
+
+## Setting the environment
+
+### Internal variables
+```{r}
+set.seed(1234)
+OUTDIR <- "./00_get_ortohologs_output";
+if(!dir.exists(OUTDIR)) dir.create(OUTDIR, recursive = TRUE);
+```
+
+### Load libraries
+```{r}
+library(biomaRt);
+```
+
+## Get orthologs
+```{r}
+#--- Create the BioMart
+human = useMart(host="ensembl.org",
+		biomart="ENSEMBL_MART_ENSEMBL", 
+		dataset="hsapiens_gene_ensembl")
+mouse = useMart(host="ensembl.org", 
+		biomart="ENSEMBL_MART_ENSEMBL", 
+		dataset="mmusculus_gene_ensembl")
+
+#--- Attributes of interest
+attributes = c("ensembl_gene_id", 
+	       "mmusculus_homolog_ensembl_gene", 
+	       "mmusculus_homolog_perc_id_r1")
+orth.mouse1 = getBM(attributes, filters="with_mmusculus_homolog",values=TRUE,
+                    mart = human, uniqueRows=TRUE)
+
+orth.mouse_keys <- getBM(c("hgnc_symbol","ensembl_gene_id"),
+                         filter="ensembl_gene_id",values=orth.mouse1$ensembl_gene_id,
+                         mart = human, uniqueRows=TRUE)
+
+orth.mouse_keys2 <- getBM(c("ensembl_gene_id","mgi_symbol"),
+                          filter="ensembl_gene_id",
+                          values=orth.mouse1$mmusculus_homolog_ensembl_gene,
+                          mart = mouse, uniqueRows=TRUE)
+
+# Table of orthologs
+orth.mouse <- merge(orth.mouse1, orth.mouse_keys2, 
+                    by.x="mmusculus_homolog_ensembl_gene",
+                    by.y="ensembl_gene_id")
+orth.mouse$mgi_symbol[orth.mouse$mgi_symbol==""] <- NA
+orth.mouse <- na.omit(orth.mouse)
+
+#-  Create dictionary (list of vectors)
+mmu2hsa.dic <- split(orth.mouse$ensembl_gene_id, orth.mouse$mgi_symbol)
+mmu2hsa.dic <- lapply(mmu2hsa.dic, function(z) unique(z))
+
+# Create another one for gene symbols
+orth.mouse <- merge(orth.mouse1,orth.mouse_keys,by.x="ensembl_gene_id",by.y="ensembl_gene_id")
+orth.mouse <- merge(orth.mouse, orth.mouse_keys2, 
+                    by.x="mmusculus_homolog_ensembl_gene",
+                    by.y="ensembl_gene_id")
+orth.mouse$mgi_symbol[orth.mouse$mgi_symbol==""] <- NA
+orth.mouse <- na.omit(orth.mouse)
+
+#-  Create dictionary (list of vectors)
+mmu2hsa <- split(orth.mouse$ensembl_gene_id, orth.mouse$mgi_symbol)
+mmu2hsa <- lapply(mmu2hsa, function(z) unique(z))
+```
+
+## Save 
+
+```{r}
+saveRDS(mmu2hsa, file=paste0(OUTDIR,"/mmu2hsa.rds"))
+```
+## SessionInfo
+```{r}
+sessionInfo()
+
+{                                                                                                                                                                                                           
+sink(file=paste0(OUTDIR,"/sessionInfo.txt"))
+print(sessionInfo())
+sink()
+}
+```
