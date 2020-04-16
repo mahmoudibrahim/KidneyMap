@@ -1,0 +1,237 @@
+---
+title: "mouse PDGFRb+: Run CPDB focused on WNT ligand-receptor pairs"
+author: "Javier Perales-Paton - javier.perales@bioquant.uni-heidelberg.de"
+output: github_document
+---
+
+## Setting the environment
+
+### Internal variables
+```{r}
+set.seed(1234)
+OUTDIR <- "./mouse_PDGFRBpositive_02_CPDB_WNT_output/";
+if(!dir.exists(OUTDIR)) dir.create(OUTDIR, recursive = TRUE);
+
+# Please change it to your local installation of CellPhoneDB
+CPDB_DIR <- "~/.cpdb/releases/v2.0.0/"
+```
+
+### Load libraries
+```{r}
+library(Matrix)
+library(SingleCellExperiment)
+library(scran)
+library(scater)
+```
+
+## Load data
+
+```{r}
+sce <- readRDS("./mouse_PDGFRBpositive_01_create_sce_output/sce.rds")
+is(sce)
+dim(sce)
+```
+
+## Extract information and map genes onto human
+
+```{r}
+# Load the ortholog dictionary
+mmu2hsa.dic <- readRDS("./00_get_ortohologs_output/mmu2hsa.rds")
+```
+
+```{r}
+# take raw data and normalise it for the subset of cells
+count_norm <- logcounts(sce)
+
+meta_data <- data.frame("Cell"=rownames(colData(sce)),
+                        "cell_type"=colData(sce)$Annotation.Level.2)
+
+# Transform gene
+mmu_genes <- rownames(count_norm)
+hsa_genes <- unlist(sapply(mmu_genes, function(g) {
+                  if(g %in% names(mmu2hsa.dic)) {
+                    mmu2hsa.dic[[g]]
+                  } else {
+                    NA
+                  }
+                }))
+mmu_genes.rpl <- unlist(sapply(mmu_genes, function(g) {
+                if(g %in% names(mmu2hsa.dic)) {
+                  rep(g, length(mmu2hsa.dic[[g]]))
+                } else {
+                  NA
+                }
+              }))
+# Remove  NA's
+hsa_genes <- hsa_genes[!is.na(mmu_genes.rpl)]
+mmu_genes.rpl <- mmu_genes.rpl[!is.na(mmu_genes.rpl)]
+
+# Reformat matrix
+count_norm2 <- count_norm[mmu_genes.rpl, ]
+rownames(count_norm2) <- hsa_genes
+count_norm2 <- as.matrix(count_norm2)
+rm(count_norm)
+```
+## Save CPDB for WNT signaling
+
+```{r}
+
+if(!file.exists(paste0(OUTDIR,"/cellphonedb_count.txt"))) {
+write.table(count_norm2, paste0(OUTDIR,"/cellphonedb_count.txt"), sep="\t", quote=F, col.names=NA)
+}
+
+if(!file.exists(paste0(OUTDIR,"/cellphonedb_meta.txt"))) {
+write.table(meta_data, paste0(OUTDIR,"/cellphonedb_meta.txt"), sep="\t", quote=F, row.names=F)
+}
+if(!file.exists(paste0(OUTDIR,"/PBS_CellPhoneDB.sh"))) {
+file.copy(from = "../templates/PBS_CellPhoneDB.sh",
+	  to = paste0(OUTDIR,"/PBS_CellPhoneDB.sh"))
+}
+```
+
+## Run CPDB
+
+```{r}
+cmd <- paste0("qsub ",paste0(OUTDIR,"/PBS_CellPhoneDB.sh"))
+if(!dir.exists(paste0(OUTDIR,"/out"))) {
+	system(cmd) # To be shuttled in the HPC
+}
+```
+
+## Search for WNT pairs in CPDB
+
+```{r}
+# Find original files of the database
+cpdb_fls <- list.files(CPDB_DIR, pattern="\\.csv", full.names = TRUE)
+names(cpdb_fls) <- paste0("CPDB.",gsub("_input\\.csv$","",basename(cpdb_fls)))
+
+for(i in names(cpdb_fls)) {
+	tmp <- read.table(cpdb_fls[i], sep=",", header=TRUE, stringsAsFactors = FALSE)
+	assign(i, tmp)
+}
+
+# Which tables have been loaded?
+ls(pattern="CPDB\\.")
+```
+Ligand and receptors of WNT pathway are characterized by:
+* Ligands start with `^WNT`.
+* Cannonical Receptors start with `FZD`.
+* This are enlisted in one curated review (PMID: ) from CPDB.
+
+Please note that we transform mouse genes to orthologs in human before running CPDB, 
+so we could just work on human genome since then.
+
+```{r}
+cat("Ligands:","\t",
+    	grep("^WNT", CPDB.gene$hgnc_symbol, value=TRUE),"\n",
+file=stdout())
+cat("Cannonical Receptors:","\t",
+    	grep("^FZD", CPDB.gene$hgnc_symbol, value=TRUE),"\n",
+file=stdout())
+```
+
+The database is subset for members of the WNT pathway.
+```{r}
+CPDB.gene <- CPDB.gene[grep("^(WNT|FZD)[0-9]+",CPDB.gene$hgnc_symbol), ]
+CPDB.protein <- subset(CPDB.protein, uniprot %in% CPDB.gene$uniprot)
+CPDB.interaction <- subset(CPDB.interaction, 
+			   partner_a %in% CPDB.gene$uniprot | partner_b %in% CPDB.gene$uniprot)
+```
+We could omit the table of complex because there is no any ligand-receptor from WNT involved there.
+
+## Load CPDB output using PDGFRb+ cells as input
+
+```{r}
+pval <- read.table("./mouse_PDGFRBpositive_02_CPDB_WNT_output/out/pvalues.txt",
+		   sep="\t",header=TRUE,stringsAsFactors = FALSE, check.names = FALSE)
+
+avg <- read.table("./mouse_PDGFRBpositive_02_CPDB_WNT_output/out/means.txt",
+		  sep="\t",header=TRUE,stringsAsFactors = FALSE, check.names = FALSE)
+
+### Reformat
+rownames(pval) <- pval$id_cp_interaction
+rownames(avg) <- avg$id_cp_interaction
+
+### Subset to WNT regulators
+WNT.common <- intersect(pval$id_cp_interaction, CPDB.interaction$id_cp_interaction)
+pval <- pval[WNT.common, ]
+avg <- avg[WNT.common, ]
+
+## Format conversion
+df <- pval[,1:11]
+pval <- pval[,12:ncol(pval)]
+avg <- avg[,12:ncol(avg)]
+
+stopifnot(all(colnames(pval) == colnames(avg)))
+pval2 <- reshape2::melt(as.matrix(pval))
+avg2 <- reshape2::melt(as.matrix(avg))
+
+stopifnot(all(pval2[,1] == avg2[,1]))
+stopifnot(all(pval2[,2] == avg2[,2]))
+
+dat <- data.frame(id_cp_interaction=pval2[,1],
+		  cells=pval2[,2],
+		  pval=pval2[,3],
+		  avg=avg2[,3])
+
+# Rename cell populations labels
+dat$cells <- as.character(dat$cells)
+dat$cells <- gsub("Injured Vascular Smooth Muscle Cells", "iSMCs", dat$cells)
+dat$cells <- gsub("Vascular Smooth Muscle Cells", "SMCs", dat$cells)
+dat$cells <- gsub("\\(Myo\\)fibroblast", "MP", dat$cells)
+dat$cells <- gsub("Mesangial Cells", "Mesa", dat$cells)
+dat$cells <- gsub("Parietal Epithelial Cells", "PECs", dat$cells)
+dat$cells <- gsub("Pericytes", "Pe", dat$cells)
+dat$cells <- gsub("\\|","_", dat$cells)
+
+# Merge with metadata of interacting_pair ligands-receptors
+dat <- merge(x=df,y=dat,by.x="id_cp_interaction",by.y="id_cp_interaction",all=TRUE)
+
+# Same ligand-receptors pairs are reverted... this is annoying
+idxs <- grep("_WNT.*$",dat$interacting_pair)
+idxs2 <- which(dat$receptor_a == "True" & dat$secreted == "True")
+stopifnot(all(idxs==idxs2))
+for(idx in idxs) {
+	dat[idx, "cells"] <- paste(rev(strsplit(dat[idx,"cells"],split="_")[[1]]),collapse="_")	
+	dat[idx, "interacting_pair"] <- paste(rev(strsplit(dat[idx,"interacting_pair"],split="_")[[1]]),collapse="_")	
+}
+
+# Define factors
+# Cells
+cells_unique <- sort(unique(dat$cells))
+cells_levels <- c(grep("^MP",cells_unique,value=TRUE),
+		  grep("^MP",cells_unique,value=TRUE, invert=TRUE))
+dat$cells <- factor(dat$cells, levels=cells_levels)
+# Ligand-receptors
+pairs_unique <- sort(unique(dat$interacting_pair), decreasing=FALSE)
+pairs_levels <- c(grep("^WNT.*FZD.*$",pairs_unique,value=TRUE),
+		  grep("^WNT.*FZD.*$",pairs_unique,value=TRUE, invert=TRUE))
+dat$interacting_pair <- factor(dat$interacting_pair, levels=rev(pairs_levels))
+
+```
+
+```{r PDGFRb_CPDB_WNT, dpi=300, fig.width=14, fig.height=8, fig.path="./mouse_PDGFRBpositive_02_CPDB_WNT_output/", dev=c('png','tiff')}
+# Source: https://rdrr.io/bioc/enrichplot/src/R/dotplot.R
+ggplot(dat, aes(x=cells, y=interacting_pair, size=-log10(pval+1e-4), color=avg)) +
+        geom_point() + 
+	ggtitle("PDGFRb+ mouse kidney cells: ligand-receptors from WNT signaling") +
+	cowplot::theme_cowplot() + 
+	theme(axis.text.x = element_text(angle = 45, hjust = 1,
+					 size=14,
+					 colour=ifelse(grepl("MP", levels(dat$cells)),
+							     "red","black")),
+	      axis.title = element_blank()
+	)
+```
+
+
+## SessionInfo
+```{r}
+sessionInfo()
+
+{                                                                                                                                                                                                           
+sink(file=paste0(OUTDIR,"/sessionInfo.txt"))
+print(sessionInfo())
+sink()
+}
+```
