@@ -184,6 +184,11 @@ df <- pval[,1:11]
 pval <- pval[,12:ncol(pval)]
 avg <- avg[,12:ncol(avg)]
 
+## Count how many are significant by rows and cols
+signif_rows <- rowSums(pval < 0.05) 
+signif_cols <- colSums(pval < 0.05) 
+
+
 stopifnot(all(colnames(pval) == colnames(avg)))
 pval2 <- reshape2::melt(as.matrix(pval))
 avg2 <- reshape2::melt(as.matrix(avg))
@@ -195,6 +200,9 @@ dat <- data.frame(id_cp_interaction=pval2[,1],
           cells=pval2[,2],
           pval=pval2[,3],
           avg=avg2[,3])
+## Add significance
+dat$signif_cnt_interaction <- signif_rows[dat$id_cp_interaction]
+dat$signif_cnt_cells <- signif_cols[dat$cells]
 
 # Rename cell populations labels
 dat$cells <- as.character(dat$cells)
@@ -247,6 +255,22 @@ ggplot(dat, aes(x=cells, y=interacting_pair, size=-log10(pval+1e-4), color=avg))
 
 ![](./mouse_PDGFRBpositive_02_CPDB_WNT_output/PDGFRb_CPDB_WNT-1.png)<!-- -->
 
+``` r
+ggplot(subset(dat, signif_cnt_interaction > 0 & signif_cnt_cells > 0), 
+       aes(x=cells, y=interacting_pair, size=-log10(pval+1e-4), color=avg)) +
+        geom_point() + 
+    ggtitle("PDGFRb+ mouse kidney cells: ligand-receptors from WNT signaling") +
+    cowplot::theme_cowplot() + 
+    theme(axis.text.x = element_text(angle = 45, hjust = 1,
+                     size=14,
+                     colour=ifelse(grepl("MP", levels(dat$cells)),
+                                 "red","black")),
+          axis.title = element_blank()
+    )
+```
+
+![](./mouse_PDGFRBpositive_02_CPDB_WNT_output/PDGFRb_CPDB_WNT_signif-1.png)<!-- -->
+
 ## SessionInfo
 
 ``` r
@@ -273,20 +297,20 @@ sessionInfo()
     ## [8] methods   base     
     ## 
     ## other attached packages:
-    ##  [1] scater_1.14.0               ggplot2_3.1.1              
-    ##  [3] scran_1.14.1                SingleCellExperiment_1.8.0 
-    ##  [5] SummarizedExperiment_1.16.0 DelayedArray_0.12.0        
-    ##  [7] BiocParallel_1.20.0         matrixStats_0.56.0         
-    ##  [9] Biobase_2.46.0              GenomicRanges_1.38.0       
-    ## [11] GenomeInfoDb_1.22.0         IRanges_2.20.0             
-    ## [13] S4Vectors_0.24.0            BiocGenerics_0.32.0        
-    ## [15] Matrix_1.2-17               rmarkdown_1.12             
+    ##  [1] rmarkdown_1.12              scater_1.14.0              
+    ##  [3] ggplot2_3.1.1               scran_1.14.1               
+    ##  [5] SingleCellExperiment_1.8.0  SummarizedExperiment_1.16.0
+    ##  [7] DelayedArray_0.12.0         BiocParallel_1.20.0        
+    ##  [9] matrixStats_0.56.0          Biobase_2.46.0             
+    ## [11] GenomicRanges_1.38.0        GenomeInfoDb_1.22.0        
+    ## [13] IRanges_2.20.0              S4Vectors_0.24.0           
+    ## [15] BiocGenerics_0.32.0         Matrix_1.2-17              
     ## [17] nvimcom_0.9-82             
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] Rcpp_1.0.1               rsvd_1.0.2              
     ##  [3] locfit_1.5-9.4           lattice_0.20-38         
-    ##  [5] assertthat_0.2.1         digest_0.6.18           
+    ##  [5] digest_0.6.18            assertthat_0.2.1        
     ##  [7] R6_2.4.0                 plyr_1.8.4              
     ##  [9] evaluate_0.13            pillar_1.3.1            
     ## [11] zlibbioc_1.32.0          rlang_0.3.4             
@@ -294,19 +318,19 @@ sessionInfo()
     ## [15] labeling_0.3             BiocNeighbors_1.4.0     
     ## [17] statmod_1.4.34           stringr_1.4.0           
     ## [19] igraph_1.2.4.1           RCurl_1.95-4.12         
-    ## [21] munsell_0.5.0            compiler_3.6.1          
-    ## [23] vipor_0.4.5              BiocSingular_1.2.0      
-    ## [25] xfun_0.6                 pkgconfig_2.0.2         
+    ## [21] munsell_0.5.0            xfun_0.6                
+    ## [23] compiler_3.6.1           vipor_0.4.5             
+    ## [25] BiocSingular_1.2.0       pkgconfig_2.0.2         
     ## [27] ggbeeswarm_0.6.0         htmltools_0.3.6         
-    ## [29] tidyselect_0.2.5         gridExtra_2.3           
-    ## [31] tibble_2.1.1             GenomeInfoDbData_1.2.2  
+    ## [29] tidyselect_0.2.5         tibble_2.1.1            
+    ## [31] gridExtra_2.3            GenomeInfoDbData_1.2.2  
     ## [33] edgeR_3.28.0             viridisLite_0.3.0       
-    ## [35] withr_2.1.2              crayon_1.3.4            
-    ## [37] dplyr_0.8.0.1            bitops_1.0-6            
+    ## [35] crayon_1.3.4             dplyr_0.8.0.1           
+    ## [37] withr_2.1.2              bitops_1.0-6            
     ## [39] grid_3.6.1               gtable_0.3.0            
     ## [41] magrittr_1.5             scales_1.0.0            
     ## [43] dqrng_0.2.1              stringi_1.4.3           
-    ## [45] reshape2_1.4.3           XVector_0.26.0          
+    ## [45] XVector_0.26.0           reshape2_1.4.3          
     ## [47] viridis_0.5.1            limma_3.42.0            
     ## [49] DelayedMatrixStats_1.8.0 cowplot_1.0.0           
     ## [51] tools_3.6.1              glue_1.3.1              
