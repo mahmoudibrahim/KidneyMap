@@ -162,6 +162,11 @@ df <- pval[,1:11]
 pval <- pval[,12:ncol(pval)]
 avg <- avg[,12:ncol(avg)]
 
+## Count how many are significant by rows and cols
+signif_rows <- rowSums(pval < 0.05) 
+signif_cols <- colSums(pval < 0.05) 
+
+
 stopifnot(all(colnames(pval) == colnames(avg)))
 pval2 <- reshape2::melt(as.matrix(pval))
 avg2 <- reshape2::melt(as.matrix(avg))
@@ -173,6 +178,9 @@ dat <- data.frame(id_cp_interaction=pval2[,1],
 		  cells=pval2[,2],
 		  pval=pval2[,3],
 		  avg=avg2[,3])
+## Add significance
+dat$signif_cnt_interaction <- signif_rows[dat$id_cp_interaction]
+dat$signif_cnt_cells <- signif_cols[dat$cells]
 
 # Rename cell populations labels
 dat$cells <- as.character(dat$cells)
@@ -213,6 +221,20 @@ dat$interacting_pair <- factor(dat$interacting_pair, levels=rev(pairs_levels))
 ```{r PDGFRb_CPDB_WNT, dpi=300, fig.width=14, fig.height=8, fig.path="./mouse_PDGFRBpositive_02_CPDB_WNT_output/", dev=c('png','tiff')}
 # Source: https://rdrr.io/bioc/enrichplot/src/R/dotplot.R
 ggplot(dat, aes(x=cells, y=interacting_pair, size=-log10(pval+1e-4), color=avg)) +
+        geom_point() + 
+	ggtitle("PDGFRb+ mouse kidney cells: ligand-receptors from WNT signaling") +
+	cowplot::theme_cowplot() + 
+	theme(axis.text.x = element_text(angle = 45, hjust = 1,
+					 size=14,
+					 colour=ifelse(grepl("MP", levels(dat$cells)),
+							     "red","black")),
+	      axis.title = element_blank()
+	)
+```
+
+```{r PDGFRb_CPDB_WNT_signif, dpi=300, fig.width=12, fig.height=8, fig.path="./mouse_PDGFRBpositive_02_CPDB_WNT_output/", dev=c('png','tiff')}
+ggplot(subset(dat, signif_cnt_interaction > 0 & signif_cnt_cells > 0), 
+       aes(x=cells, y=interacting_pair, size=-log10(pval+1e-4), color=avg)) +
         geom_point() + 
 	ggtitle("PDGFRb+ mouse kidney cells: ligand-receptors from WNT signaling") +
 	cowplot::theme_cowplot() + 
