@@ -2,7 +2,7 @@
 # ecm_score_demo.r
 #
 # Data describes bulk kidney RNA-seq from Diabetic Nephropathy Patients
-# and Control (healthy part) of tumuor nephrectomies. 
+# and Control (healthy part) of tumor nephrectomies. 
 # Data source: Fan et al. Diabetes, 2019. 
 # https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE142025 (GSE142025_RAW.tar) 
 #
