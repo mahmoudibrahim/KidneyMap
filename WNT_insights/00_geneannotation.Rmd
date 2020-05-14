@@ -1,5 +1,5 @@
 ---
-title: "Get amapping table of orthologs between mouse and human"
+title: "Get a mapping table of orthologs between mouse and human"
 author: "Javier Perales-Paton - javier.perales@bioquant.uni-heidelberg.de"
 output: github_document
 ---
@@ -9,7 +9,7 @@ output: github_document
 ### Internal variables
 ```{r}
 set.seed(1234)
-OUTDIR <- "./00_get_ortohologs_output";
+OUTDIR <- "./00_geneannotation_output";
 if(!dir.exists(OUTDIR)) dir.create(OUTDIR, recursive = TRUE);
 ```
 
@@ -28,11 +28,24 @@ mouse = useMart(host="ensembl.org",
 		biomart="ENSEMBL_MART_ENSEMBL", 
 		dataset="mmusculus_gene_ensembl")
 
+```
+
+We get the full gene annotation for mouse powered by EnsEMBL
+```{r}
+mouseDB <- getBM(attributes=c("ensembl_gene_id", "mgi_symbol"), 
+	       mart=mouse, uniqueRows=TRUE)
+```
+
+Then we focused on those that present orthologs
+```{r}
 #--- Attributes of interest
 attributes = c("ensembl_gene_id", 
 	       "mmusculus_homolog_ensembl_gene", 
 	       "mmusculus_homolog_perc_id_r1")
-orth.mouse1 = getBM(attributes, filters="with_mmusculus_homolog",values=TRUE,
+
+orth.mouse1 = getBM(attributes, 
+		    filters="with_mmusculus_homolog",
+		    values=TRUE,
                     mart = human, uniqueRows=TRUE)
 
 orth.mouse_keys <- getBM(c("hgnc_symbol","ensembl_gene_id"),
@@ -71,6 +84,9 @@ mmu2hsa <- lapply(mmu2hsa, function(z) unique(z))
 ## Save 
 
 ```{r}
+# ensembl-symbol
+saveRDS(mouseDB, file=paste0(OUTDIR, "/mouse.rds"))
+saveRDS(orth.mouse, file=paste0(OUTDIR,"/orthmouse.rds"))
 saveRDS(mmu2hsa, file=paste0(OUTDIR,"/mmu2hsa.rds"))
 ```
 ## SessionInfo

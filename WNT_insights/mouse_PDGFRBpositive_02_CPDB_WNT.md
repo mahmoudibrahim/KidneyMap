@@ -20,9 +20,111 @@ CPDB_DIR <- "~/.cpdb/releases/v2.0.0/"
 ``` r
 library(Matrix)
 library(SingleCellExperiment)
+```
+
+    ## Loading required package: SummarizedExperiment
+
+    ## Loading required package: GenomicRanges
+
+    ## Loading required package: stats4
+
+    ## Loading required package: BiocGenerics
+
+    ## Loading required package: parallel
+
+    ## 
+    ## Attaching package: 'BiocGenerics'
+
+    ## The following objects are masked from 'package:parallel':
+    ## 
+    ##     clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
+    ##     clusterExport, clusterMap, parApply, parCapply, parLapply,
+    ##     parLapplyLB, parRapply, parSapply, parSapplyLB
+
+    ## The following object is masked from 'package:Matrix':
+    ## 
+    ##     which
+
+    ## The following objects are masked from 'package:stats':
+    ## 
+    ##     IQR, mad, sd, var, xtabs
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     anyDuplicated, append, as.data.frame, basename, cbind,
+    ##     colnames, dirname, do.call, duplicated, eval, evalq, Filter,
+    ##     Find, get, grep, grepl, intersect, is.unsorted, lapply, Map,
+    ##     mapply, match, mget, order, paste, pmax, pmax.int, pmin,
+    ##     pmin.int, Position, rank, rbind, Reduce, rownames, sapply,
+    ##     setdiff, sort, table, tapply, union, unique, unsplit, which,
+    ##     which.max, which.min
+
+    ## Loading required package: S4Vectors
+
+    ## 
+    ## Attaching package: 'S4Vectors'
+
+    ## The following object is masked from 'package:Matrix':
+    ## 
+    ##     expand
+
+    ## The following object is masked from 'package:base':
+    ## 
+    ##     expand.grid
+
+    ## Loading required package: IRanges
+
+    ## Loading required package: GenomeInfoDb
+
+    ## Loading required package: Biobase
+
+    ## Welcome to Bioconductor
+    ## 
+    ##     Vignettes contain introductory material; view with
+    ##     'browseVignettes()'. To cite Bioconductor, see
+    ##     'citation("Biobase")', and for packages 'citation("pkgname")'.
+
+    ## Loading required package: DelayedArray
+
+    ## Loading required package: matrixStats
+
+    ## Warning: package 'matrixStats' was built under R version 3.6.2
+
+    ## 
+    ## Attaching package: 'matrixStats'
+
+    ## The following objects are masked from 'package:Biobase':
+    ## 
+    ##     anyMissing, rowMedians
+
+    ## Loading required package: BiocParallel
+
+    ## 
+    ## Attaching package: 'DelayedArray'
+
+    ## The following objects are masked from 'package:matrixStats':
+    ## 
+    ##     colMaxs, colMins, colRanges, rowMaxs, rowMins, rowRanges
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     aperm, apply, rowsum
+
+``` r
 library(scran)
+```
+
+    ## Registered S3 methods overwritten by 'ggplot2':
+    ##   method         from 
+    ##   [.quosures     rlang
+    ##   c.quosures     rlang
+    ##   print.quosures rlang
+
+``` r
 library(scater)
 ```
+
+    ## Loading required package: ggplot2
 
 ## Load data
 
@@ -297,20 +399,20 @@ sessionInfo()
     ## [8] methods   base     
     ## 
     ## other attached packages:
-    ##  [1] rmarkdown_1.12              scater_1.14.0              
-    ##  [3] ggplot2_3.1.1               scran_1.14.1               
-    ##  [5] SingleCellExperiment_1.8.0  SummarizedExperiment_1.16.0
-    ##  [7] DelayedArray_0.12.0         BiocParallel_1.20.0        
-    ##  [9] matrixStats_0.56.0          Biobase_2.46.0             
-    ## [11] GenomicRanges_1.38.0        GenomeInfoDb_1.22.0        
-    ## [13] IRanges_2.20.0              S4Vectors_0.24.0           
-    ## [15] BiocGenerics_0.32.0         Matrix_1.2-17              
+    ##  [1] scater_1.14.0               ggplot2_3.1.1              
+    ##  [3] scran_1.14.1                SingleCellExperiment_1.8.0 
+    ##  [5] SummarizedExperiment_1.16.0 DelayedArray_0.12.0        
+    ##  [7] BiocParallel_1.20.0         matrixStats_0.56.0         
+    ##  [9] Biobase_2.46.0              GenomicRanges_1.38.0       
+    ## [11] GenomeInfoDb_1.22.0         IRanges_2.20.0             
+    ## [13] S4Vectors_0.24.0            BiocGenerics_0.32.0        
+    ## [15] Matrix_1.2-17               rmarkdown_1.12             
     ## [17] nvimcom_0.9-82             
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] Rcpp_1.0.1               rsvd_1.0.2              
     ##  [3] locfit_1.5-9.4           lattice_0.20-38         
-    ##  [5] digest_0.6.18            assertthat_0.2.1        
+    ##  [5] assertthat_0.2.1         digest_0.6.18           
     ##  [7] R6_2.4.0                 plyr_1.8.4              
     ##  [9] evaluate_0.13            pillar_1.3.1            
     ## [11] zlibbioc_1.32.0          rlang_0.3.4             
@@ -318,19 +420,19 @@ sessionInfo()
     ## [15] labeling_0.3             BiocNeighbors_1.4.0     
     ## [17] statmod_1.4.34           stringr_1.4.0           
     ## [19] igraph_1.2.4.1           RCurl_1.95-4.12         
-    ## [21] munsell_0.5.0            xfun_0.6                
-    ## [23] compiler_3.6.1           vipor_0.4.5             
-    ## [25] BiocSingular_1.2.0       pkgconfig_2.0.2         
+    ## [21] munsell_0.5.0            compiler_3.6.1          
+    ## [23] vipor_0.4.5              BiocSingular_1.2.0      
+    ## [25] xfun_0.6                 pkgconfig_2.0.2         
     ## [27] ggbeeswarm_0.6.0         htmltools_0.3.6         
-    ## [29] tidyselect_0.2.5         tibble_2.1.1            
-    ## [31] gridExtra_2.3            GenomeInfoDbData_1.2.2  
+    ## [29] tidyselect_0.2.5         gridExtra_2.3           
+    ## [31] tibble_2.1.1             GenomeInfoDbData_1.2.2  
     ## [33] edgeR_3.28.0             viridisLite_0.3.0       
-    ## [35] crayon_1.3.4             dplyr_0.8.0.1           
-    ## [37] withr_2.1.2              bitops_1.0-6            
+    ## [35] withr_2.1.2              crayon_1.3.4            
+    ## [37] dplyr_0.8.0.1            bitops_1.0-6            
     ## [39] grid_3.6.1               gtable_0.3.0            
     ## [41] magrittr_1.5             scales_1.0.0            
     ## [43] dqrng_0.2.1              stringi_1.4.3           
-    ## [45] XVector_0.26.0           reshape2_1.4.3          
+    ## [45] reshape2_1.4.3           XVector_0.26.0          
     ## [47] viridis_0.5.1            limma_3.42.0            
     ## [49] DelayedMatrixStats_1.8.0 cowplot_1.0.0           
     ## [51] tools_3.6.1              glue_1.3.1              
