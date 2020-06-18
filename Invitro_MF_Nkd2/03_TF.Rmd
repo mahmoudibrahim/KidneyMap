@@ -188,6 +188,7 @@ ggplot(dat, aes(x=logFC, y=-log10(P.Value), colour=signif)) +
 			  ylim=c(1,20)) +
 
     coord_cartesian(xlim = c(-13,10), 
+		    ylim=c(0, ceiling(max(-log10(dat$P.Value)))),
 		    clip = "off") +
     scale_color_manual(values=c("orange", "black")) +
     xlab("log2-fold-change") +
