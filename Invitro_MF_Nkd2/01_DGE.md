@@ -53,14 +53,171 @@ Essential R libraries for the analysis.
 library(limma)
 library(edgeR)
 library(dplyr)
+```
+
+    ## 
+    ## Attaching package: 'dplyr'
+
+    ## The following objects are masked from 'package:stats':
+    ## 
+    ##     filter, lag
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     intersect, setdiff, setequal, union
+
+``` r
 library(ggplot2)
 library(ggrepel)
 library(cowplot)
+```
+
+    ## 
+    ## ********************************************************
+
+    ## Note: As of version 1.0.0, cowplot does not change the
+
+    ##   default ggplot2 theme anymore. To recover the previous
+
+    ##   behavior, execute:
+    ##   theme_set(theme_cowplot())
+
+    ## ********************************************************
+
+``` r
 library(GSEABase)
+```
+
+    ## Loading required package: BiocGenerics
+
+    ## Loading required package: parallel
+
+    ## 
+    ## Attaching package: 'BiocGenerics'
+
+    ## The following objects are masked from 'package:parallel':
+    ## 
+    ##     clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
+    ##     clusterExport, clusterMap, parApply, parCapply, parLapply,
+    ##     parLapplyLB, parRapply, parSapply, parSapplyLB
+
+    ## The following objects are masked from 'package:dplyr':
+    ## 
+    ##     combine, intersect, setdiff, union
+
+    ## The following object is masked from 'package:limma':
+    ## 
+    ##     plotMA
+
+    ## The following objects are masked from 'package:stats':
+    ## 
+    ##     IQR, mad, sd, var, xtabs
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     anyDuplicated, append, as.data.frame, basename, cbind, colnames,
+    ##     dirname, do.call, duplicated, eval, evalq, Filter, Find, get, grep,
+    ##     grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget,
+    ##     order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
+    ##     rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply,
+    ##     union, unique, unsplit, which, which.max, which.min
+
+    ## Loading required package: Biobase
+
+    ## Welcome to Bioconductor
+    ## 
+    ##     Vignettes contain introductory material; view with
+    ##     'browseVignettes()'. To cite Bioconductor, see
+    ##     'citation("Biobase")', and for packages 'citation("pkgname")'.
+
+    ## Loading required package: annotate
+
+    ## Loading required package: AnnotationDbi
+
+    ## Loading required package: stats4
+
+    ## Loading required package: IRanges
+
+    ## Loading required package: S4Vectors
+
+    ## 
+    ## Attaching package: 'S4Vectors'
+
+    ## The following objects are masked from 'package:dplyr':
+    ## 
+    ##     first, rename
+
+    ## The following object is masked from 'package:base':
+    ## 
+    ##     expand.grid
+
+    ## 
+    ## Attaching package: 'IRanges'
+
+    ## The following objects are masked from 'package:dplyr':
+    ## 
+    ##     collapse, desc, slice
+
+    ## 
+    ## Attaching package: 'AnnotationDbi'
+
+    ## The following object is masked from 'package:dplyr':
+    ## 
+    ##     select
+
+    ## Loading required package: XML
+
+    ## Loading required package: graph
+
+    ## 
+    ## Attaching package: 'graph'
+
+    ## The following object is masked from 'package:XML':
+    ## 
+    ##     addNode
+
+``` r
 library(fgsea)
 library(reshape2)
 library(gridExtra)
+```
+
+    ## 
+    ## Attaching package: 'gridExtra'
+
+    ## The following object is masked from 'package:Biobase':
+    ## 
+    ##     combine
+
+    ## The following object is masked from 'package:BiocGenerics':
+    ## 
+    ##     combine
+
+    ## The following object is masked from 'package:dplyr':
+    ## 
+    ##     combine
+
+``` r
 library(ComplexHeatmap)
+```
+
+    ## Loading required package: grid
+
+    ## ========================================
+    ## ComplexHeatmap version 2.4.2
+    ## Bioconductor page: http://bioconductor.org/packages/ComplexHeatmap/
+    ## Github page: https://github.com/jokergoo/ComplexHeatmap
+    ## Documentation: http://jokergoo.github.io/ComplexHeatmap-reference
+    ## 
+    ## If you use it in published research, please cite:
+    ## Gu, Z. Complex heatmaps reveal patterns and correlations in multidimensional 
+    ##   genomic data. Bioinformatics 2016.
+    ## 
+    ## This message can be suppressed by:
+    ##   suppressPackageStartupMessages(library(ComplexHeatmap))
+    ## ========================================
+
+``` r
 library(grid)
 fontTXT <- "sans"
 ```
@@ -773,10 +930,10 @@ draw(hp, heatmap_legend_side="bottom")
 ![](./01_DGE_output//figures/hp_GSEA_Matrisome-1.png)<!-- -->
 
 ``` r
-set1 <- unlist(ECM.res[[cnt]][which(ECM.res[["NKD2_KO_severe"]]$pathway=="Collagens"), 
-           "leadingEdge"])
-set2 <- unlist(ECM.res[[cnt]][which(ECM.res[["NKD2_KO_shallow"]]$pathway=="Collagens"), 
-           "leadingEdge"])
+set1 <- ECM.res$NKD2_KO_severe %>% filter(pathway=="Collagens") %>% 
+    .$leadingEdge %>% unlist()
+set2 <- ECM.res$NKD2_KO_shallow %>% filter(pathway=="Collagens") %>% 
+    .$leadingEdge %>% unlist()
 
 genes <- unique(sort(c(set1, set2)))
 

@@ -643,10 +643,10 @@ draw(hp, heatmap_legend_side="bottom")
 ```
 
 ```{r hp_KO_collagens, fig.width=4, fig.height=6}
-set1 <- unlist(ECM.res[[cnt]][which(ECM.res[["NKD2_KO_severe"]]$pathway=="Collagens"), 
-	       "leadingEdge"])
-set2 <- unlist(ECM.res[[cnt]][which(ECM.res[["NKD2_KO_shallow"]]$pathway=="Collagens"), 
-	       "leadingEdge"])
+set1 <- ECM.res$NKD2_KO_severe %>% filter(pathway=="Collagens") %>% 
+	.$leadingEdge %>% unlist()
+set2 <- ECM.res$NKD2_KO_shallow %>% filter(pathway=="Collagens") %>% 
+	.$leadingEdge %>% unlist()
 
 genes <- unique(sort(c(set1, set2)))
 
