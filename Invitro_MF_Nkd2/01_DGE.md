@@ -39,7 +39,7 @@ DATADIR <- paste0(OUTDIR, "/data/")
 if(!dir.exists(DATADIR)) dir.create(DATADIR);
 
 # If already exists, clean dirs?
-clean_dirs <- TRUE
+clean_dirs <- FALSE
 if(clean_dirs) {
     unlink(list.files(OUTDIR, full.names=TRUE, recursive = TRUE))
 }
@@ -218,6 +218,7 @@ library(ComplexHeatmap)
     ## ========================================
 
 ``` r
+library(GSVA)
 library(grid)
 fontTXT <- "sans"
 ```
@@ -787,7 +788,7 @@ gg <- ggplot(subset(df, padj < 0.05), aes(x=pathway, y=abs(NES), fill=NES)) +
 
 We conclude this section with the charaterization of the cellular state
 in the two experiments using the hallmark gene set collection from
-MsigDB. We are particularly interested in PHD2cKO Macrophages.
+MsigDB.
 
 First we create a list with the rankings by the moderated-t statistic
 for each contrast
@@ -985,6 +986,174 @@ draw(hp, heatmap_legend_side="bottom")
 ```
 
 ![](./01_DGE_output//figures/hp_KO_collagens-1.png)<!-- -->
+
+We extract the leadingEdge genes from each pathway in each contrast from
+significant hits. We transform this into a data.frame with membership
+annotation (pathway).
+
+``` r
+Matrisome_ledge <- lapply(ECM.res,function(z) {
+                  res <- z[z$padj < 0.05,c("pathway","leadingEdge")]
+                  res2 <- apply(res,1, function(j) data.frame(pathway=rep(j$pathway, 
+                                          length(j$leadingEdge)),
+                                      lEdge=unlist(j$leadingEdge)))
+                  res3 <- do.call("rbind", res2)
+})
+Matrisome_ledge <- do.call("rbind", Matrisome_ledge)
+rownames(Matrisome_ledge) <- NULL
+Matrisome_ledge <- unique(Matrisome_ledge)
+head(Matrisome_ledge)
+```
+
+    ##             pathway    lEdge
+    ## 1 ECM Glycoproteins   IGFBP5
+    ## 2 ECM Glycoproteins    SPARC
+    ## 3 ECM Glycoproteins    EDIL3
+    ## 4 ECM Glycoproteins   IGFBP3
+    ## 5 ECM Glycoproteins CRISPLD2
+    ## 6 ECM Glycoproteins    AEBP1
+
+``` r
+Matrisome_ledge <- Matrisome_ledge[order(Matrisome_ledge$pathway),]
+```
+
+``` r
+fillMatrix <- function(mat, genes) {
+    N <- ncol(mat)
+    exprGenes <- rownames(mat)
+    missing_genes <- setdiff(genes, exprGenes)
+    iset_genes <- intersect(genes, exprGenes)
+    missing_mat <- matrix(NA, nrow=length(missing_genes), ncol=N,
+                  dimnames=list(missing_genes, colnames(mat)))
+    
+    mat2 <- rbind(mat[iset_genes,], missing_mat)
+    mat2 <- mat2[genes, ]
+    return(mat2)
+}
+
+set.seed(1245)
+
+KO_mat <- fillMatrix(KO_v$E, Matrisome_ledge$lEdge)
+KO_gr <- KO_v$targets[,"group", drop=FALSE]
+KO_gr$group <- as.character(KO_gr$group)
+KO_gr[which(KO_gr$group=="KO_ctrl"),1] <- "control"
+KO_gr[which(KO_gr$group=="KO_1"),1] <- "KO_severe"
+KO_gr[which(KO_gr$group=="KO_2"),1] <- "KO_shallow_1"
+KO_gr[which(KO_gr$group=="KO_3"),1] <- "KO_shallow_2"
+KO_ann <- HeatmapAnnotation(df=KO_gr,
+                col=list(group=c("control"="grey",
+                           "KO_severe"="#bf41c6",
+                           "KO_shallow_1"="#175f29",
+                           "KO_shallow_2"="#82d038")),
+                show_annotation_name = FALSE)
+
+OE_mat <-  fillMatrix(OE_v$E, Matrisome_ledge$lEdge)
+OE_gr <- OE_v$targets[,"group", drop=FALSE]
+OE_gr$group <- as.character(OE_gr$group)
+OE_gr[which(OE_gr$group=="OE_ctrl"),1] <- "control"
+OE_gr[which(OE_gr$group=="OE"),1] <- "OverExpr."
+OE_ann <- HeatmapAnnotation(df=OE_gr,
+                col=list(group=c("control"="grey",
+                         "OverExpr."="#1d4ab7")),
+            show_annotation_name = FALSE)
+
+
+# mat <- cbind(KO_matrix, OE_matrix)
+# sann <- data.frame(group=c(as.character(KO_v$targets$group), 
+#              as.character(OE_v$targets$group)),
+#          row.names=c(colnames(KO_v), colnames(OE_v)))
+# 
+matrisome_df <- data.frame("MatrisomeDB_class"=Matrisome_ledge$pathway,
+               row.names=Matrisome_ledge$ledge)
+hr <- rowAnnotation(df=matrisome_df, show_annotation_name=FALSE)
+
+h1 <- hr + Heatmap(t(scale(t(KO_mat))), top_annotation = KO_ann, 
+          heatmap_legend_param=list(legend_direction="horizontal",
+                        title_gp=gpar(fontsize=12),
+                        labels_gp=gpar(fontsize=12),
+                        legend_width=unit(5,"cm")), 
+           show_row_names = FALSE, show_column_names = FALSE,
+          column_title = "NKD2 Knock-out",
+    name="Gene Expresion (row scaled)", cluster_rows=FALSE)
+h2 <- hr + Heatmap(t(scale(t(OE_mat))), top_annotation = OE_ann, 
+           show_row_names = FALSE, show_column_names = FALSE,
+          column_title = "NKD2 Over-Expression",
+    name="Gene Expresion (row scaled)", cluster_rows=FALSE)
+
+h1 + h2
+```
+
+    ## Warning: Heatmap/annotation names are duplicated: heatmap_annotation_2, Gene
+    ## Expresion (row scaled)
+
+![](./01_DGE_output//figures/hp_bulkNKD2_matrisome-1.png)<!-- -->
+
+``` r
+# draw(h1 + h2, heatmap_legend_side="bottom") # annotation_legend_side = "bottom")
+# draw(h1 + h2, annotation_legend_side = "bottom")
+```
+
+## GSVA
+
+``` r
+KO_es <- gsva(KO_v$E, ECM, method="gsva", kcdf="Gaussian")
+```
+
+    ## Estimating GSVA scores for 6 gene sets.
+    ## Estimating ECDFs with Gaussian kernels
+    ##   |                                                                              |                                                                      |   0%  |                                                                              |============                                                          |  17%  |                                                                              |=======================                                               |  33%  |                                                                              |===================================                                   |  50%  |                                                                              |===============================================                       |  67%  |                                                                              |==========================================================            |  83%  |                                                                              |======================================================================| 100%
+
+``` r
+KO_es <- reshape2::melt(KO_es)
+KO_es$group <- as.character(KO_v$target[KO_es[,2],"group"])
+KO_es$group[which(KO_es$group=="KO_ctrl")] <- "control"
+KO_es$group[which(KO_es$group=="KO_1")] <- "KO_severe"
+KO_es$group[which(KO_es$group=="KO_2")] <- "KO_shallow_1"
+KO_es$group[which(KO_es$group=="KO_3")] <- "KO_shallow_2"
+
+colnames(KO_es) <- c("MatrisomeDB", "sample", "score", "group")
+ggplot(KO_es, aes(x=group,y=score, colour=group)) + geom_point() + 
+    ylab("GSVA score") +
+    facet_wrap(.~ MatrisomeDB) + theme_bw() +
+    theme(axis.text.y = element_text(size=14, colour="black"),
+          axis.text.x = element_blank(),
+          axis.title = element_text(size=12, colour="black"),
+          legend.position = "bottom",
+          legend.text = element_text(size=12, colour="black"),
+          legend.title = element_blank(),
+          strip.text.x = element_text(size=12, colour="black"))
+```
+
+![](./01_DGE_output//figures/gsva_bulkNKD2_KO-1.png)<!-- -->
+
+``` r
+OE_es <- gsva(OE_v$E, ECM, method="gsva", kcdf="Gaussian")
+```
+
+    ## Estimating GSVA scores for 6 gene sets.
+    ## Estimating ECDFs with Gaussian kernels
+    ##   |                                                                              |                                                                      |   0%  |                                                                              |============                                                          |  17%  |                                                                              |=======================                                               |  33%  |                                                                              |===================================                                   |  50%  |                                                                              |===============================================                       |  67%  |                                                                              |==========================================================            |  83%  |                                                                              |======================================================================| 100%
+
+``` r
+OE_es <- reshape2::melt(OE_es)
+OE_es$group <- as.character(OE_v$target[OE_es[,2],"group"])
+OE_es$group[which(OE_es$group=="OE_ctrl")] <- "control"
+OE_es$group[which(OE_es$group=="OE_2")] <- "Over expression"
+
+colnames(OE_es) <- c("MatrisomeDB", "sample", "score", "group")
+ggplot(OE_es, aes(x=group,y=score, colour=group)) + geom_point() + 
+    ylab("GSVA score") +
+    facet_wrap(.~ MatrisomeDB) + theme_bw() +
+    theme(axis.text.y = element_text(size=14, colour="black"),
+          axis.text.x = element_blank(),
+          axis.title = element_text(size=12, colour="black"),
+          legend.position = "bottom",
+          legend.text = element_text(size=12, colour="black"),
+          legend.title = element_blank(),
+          strip.text.x = element_text(size=12, colour="black"))
+```
+
+![](./01_DGE_output//figures/gsva_bulkNKD2_OE-1.png)<!-- -->
 
 ## Visualization of differentially expressed genes
 
@@ -1223,34 +1392,52 @@ sessionInfo()
     ##  [8] datasets  methods   base     
     ## 
     ## other attached packages:
-    ##  [1] ComplexHeatmap_2.4.2 gridExtra_2.3        reshape2_1.4.4      
-    ##  [4] fgsea_1.14.0         GSEABase_1.50.0      graph_1.66.0        
-    ##  [7] annotate_1.66.0      XML_3.99-0.3         AnnotationDbi_1.50.0
-    ## [10] IRanges_2.22.1       S4Vectors_0.26.0     Biobase_2.48.0      
-    ## [13] BiocGenerics_0.34.0  cowplot_1.0.0        ggrepel_0.8.2       
-    ## [16] ggplot2_3.3.0        dplyr_1.0.0          edgeR_3.30.0        
-    ## [19] limma_3.44.1         rmarkdown_2.1        nvimcom_0.9-82      
+    ##  [1] GSVA_1.36.0          ComplexHeatmap_2.4.2 gridExtra_2.3       
+    ##  [4] reshape2_1.4.4       fgsea_1.14.0         GSEABase_1.50.0     
+    ##  [7] graph_1.66.0         annotate_1.66.0      XML_3.99-0.3        
+    ## [10] AnnotationDbi_1.50.0 IRanges_2.22.1       S4Vectors_0.26.0    
+    ## [13] Biobase_2.48.0       BiocGenerics_0.34.0  cowplot_1.0.0       
+    ## [16] ggrepel_0.8.2        ggplot2_3.3.0        dplyr_1.0.0         
+    ## [19] edgeR_3.30.0         limma_3.44.1         rmarkdown_2.1       
+    ## [22] nvimcom_0.9-82      
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] Rcpp_1.0.4.6        locfit_1.5-9.4      circlize_0.4.9     
-    ##  [4] lattice_0.20-41     png_0.1-7           digest_0.6.25      
-    ##  [7] R6_2.4.1            plyr_1.8.6          RSQLite_2.2.0      
-    ## [10] evaluate_0.14       pillar_1.4.4        GlobalOptions_0.1.1
-    ## [13] rlang_0.4.6         data.table_1.12.8   blob_1.2.1         
-    ## [16] GetoptLong_0.1.8    Matrix_1.2-18       labeling_0.3       
-    ## [19] BiocParallel_1.22.0 stringr_1.4.0       RCurl_1.98-1.2     
-    ## [22] bit_1.1-15.2        munsell_0.5.0       compiler_4.0.0     
-    ## [25] xfun_0.14           pkgconfig_2.0.3     shape_1.4.4        
-    ## [28] htmltools_0.4.0     tidyselect_1.1.0    tibble_3.0.1       
-    ## [31] crayon_1.3.4        withr_2.2.0         bitops_1.0-6       
-    ## [34] xtable_1.8-4        gtable_0.3.0        lifecycle_0.2.0    
-    ## [37] DBI_1.1.0           magrittr_1.5        scales_1.1.1       
-    ## [40] stringi_1.4.6       farver_2.0.3        ellipsis_0.3.1     
-    ## [43] generics_0.0.2      vctrs_0.3.0         fastmatch_1.1-0    
-    ## [46] RColorBrewer_1.1-2  rjson_0.2.20        tools_4.0.0        
-    ## [49] bit64_0.9-7         glue_1.4.1          purrr_0.3.4        
-    ## [52] yaml_2.2.1          clue_0.3-57         colorspace_1.4-1   
-    ## [55] cluster_2.1.0       memoise_1.1.0       knitr_1.28
+    ##  [1] bitops_1.0-6                matrixStats_0.56.0         
+    ##  [3] bit64_0.9-7                 RColorBrewer_1.1-2         
+    ##  [5] GenomeInfoDb_1.24.0         tools_4.0.0                
+    ##  [7] R6_2.4.1                    DBI_1.1.0                  
+    ##  [9] colorspace_1.4-1            GetoptLong_0.1.8           
+    ## [11] withr_2.2.0                 tidyselect_1.1.0           
+    ## [13] bit_1.1-15.2                compiler_4.0.0             
+    ## [15] DelayedArray_0.14.0         labeling_0.3               
+    ## [17] scales_1.1.1                stringr_1.4.0              
+    ## [19] digest_0.6.25               XVector_0.28.0             
+    ## [21] pkgconfig_2.0.3             htmltools_0.4.0            
+    ## [23] fastmap_1.0.1               rlang_0.4.6                
+    ## [25] GlobalOptions_0.1.1         RSQLite_2.2.0              
+    ## [27] shiny_1.4.0.2               farver_2.0.3               
+    ## [29] shape_1.4.4                 generics_0.0.2             
+    ## [31] BiocParallel_1.22.0         RCurl_1.98-1.2             
+    ## [33] magrittr_1.5                GenomeInfoDbData_1.2.3     
+    ## [35] Matrix_1.2-18               Rcpp_1.0.4.6               
+    ## [37] munsell_0.5.0               lifecycle_0.2.0            
+    ## [39] stringi_1.4.6               yaml_2.2.1                 
+    ## [41] SummarizedExperiment_1.18.1 zlibbioc_1.34.0            
+    ## [43] plyr_1.8.6                  blob_1.2.1                 
+    ## [45] promises_1.1.0              crayon_1.3.4               
+    ## [47] lattice_0.20-41             circlize_0.4.9             
+    ## [49] locfit_1.5-9.4              knitr_1.28                 
+    ## [51] pillar_1.4.4                GenomicRanges_1.40.0       
+    ## [53] rjson_0.2.20                fastmatch_1.1-0            
+    ## [55] glue_1.4.1                  evaluate_0.14              
+    ## [57] data.table_1.12.8           png_0.1-7                  
+    ## [59] vctrs_0.3.0                 httpuv_1.5.2               
+    ## [61] gtable_0.3.0                purrr_0.3.4                
+    ## [63] clue_0.3-57                 xfun_0.14                  
+    ## [65] mime_0.9                    xtable_1.8-4               
+    ## [67] later_1.0.0                 tibble_3.0.1               
+    ## [69] shinythemes_1.1.2           memoise_1.1.0              
+    ## [71] cluster_2.1.0               ellipsis_0.3.1
 
 ``` r
 {                                                                                                                                                                                                           
