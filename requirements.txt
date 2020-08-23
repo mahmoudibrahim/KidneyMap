@@ -1,13 +1,14 @@
 ##################
 ##R requirements##
 ##################
-R version 3.5.3 (2019-03-11)
+> sessionInfo()
+R version 3.6.1 (2019-07-05)
 Platform: x86_64-pc-linux-gnu (64-bit)
-Running under: Ubuntu 16.04.6 LTS
+Running under: Ubuntu 16.04.7 LTS
 
 Matrix products: default
-BLAS: /home/mibrahim/software/R-3.5.3/lib/libRblas.so
-LAPACK: /home/mibrahim/software/R-3.5.3/lib/libRlapack.so
+BLAS:   /home/mibrahim/software/R-3.6.1/lib/R/lib/libRblas.so
+LAPACK: /home/mibrahim/software/R-3.6.1/lib/R/lib/libRlapack.so
 
 locale:
  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -22,21 +23,60 @@ attached base packages:
 [8] methods   base     
 
 other attached packages:
- [1] slingshot_1.0.0             bigmemory_4.5.33           
- [3] princurve_2.1.3             ggpubr_0.2.1               
- [5] magrittr_1.5                mclust_5.4.3               
- [7] genesorteR_0.4.0            RANN_2.6.1                 
- [9] igraph_1.2.4.1              irlba_2.3.3                
-[11] Matrix_1.2-17               scran_1.10.2               
-[13] scater_1.10.1               ggplot2_3.2.0              
-[15] SingleCellExperiment_1.4.1  SummarizedExperiment_1.12.0
-[17] DelayedArray_0.8.0          BiocParallel_1.16.6        
-[19] matrixStats_0.54.0          Biobase_2.42.0             
-[21] GenomicRanges_1.34.0        GenomeInfoDb_1.18.2        
-[23] IRanges_2.16.0              S4Vectors_0.20.1           
-[25] BiocGenerics_0.28.0         vioplot_0.3.2              
-[27] zoo_1.8-5                   sm_2.2-5.6                 
-[29] pheatmap_1.0.12    
+ [1] tibble_2.1.3                msigdbr_7.0.1              
+ [3] clusterProfiler_3.12.0      gplots_3.0.1.2             
+ [5] vegan_2.5-6                 lattice_0.20-38            
+ [7] permute_0.9-5               ggraph_2.0.0               
+ [9] mclust_5.4.5                genesorteR_0.4.1           
+[11] RANN_2.6.1                  igraph_1.2.4.2             
+[13] irlba_2.3.3                 Matrix_1.2-17              
+[15] scran_1.12.1                scater_1.12.2              
+[17] ggplot2_3.2.1               SingleCellExperiment_1.6.0 
+[19] SummarizedExperiment_1.14.1 DelayedArray_0.10.0        
+[21] BiocParallel_1.18.1         matrixStats_0.55.0         
+[23] Biobase_2.44.0              GenomicRanges_1.36.1       
+[25] GenomeInfoDb_1.20.0         IRanges_2.18.3             
+[27] S4Vectors_0.22.1            BiocGenerics_0.30.0        
+[29] vioplot_0.3.4               zoo_1.8-7                  
+[31] sm_2.2-5.6                  pheatmap_1.0.12            
+
+loaded via a namespace (and not attached):
+  [1] fastmatch_1.1-0          plyr_1.8.5               lazyeval_0.2.2          
+  [4] splines_3.6.1            urltools_1.7.3           digest_0.6.23           
+  [7] GOSemSim_2.10.0          viridis_0.5.1            GO.db_3.8.2             
+ [10] gdata_2.18.0             magrittr_1.5             memoise_1.1.0           
+ [13] cluster_2.1.0            limma_3.40.6             graphlayouts_0.5.0      
+ [16] enrichplot_1.4.0         prettyunits_1.1.1        colorspace_1.4-1        
+ [19] blob_1.2.1               ggrepel_0.8.1            dplyr_0.8.3             
+ [22] tcltk_3.6.1              crayon_1.3.4             RCurl_1.98-1.1          
+ [25] jsonlite_1.6             glue_1.3.1               polyclip_1.10-0         
+ [28] gtable_0.3.0             zlibbioc_1.30.0          XVector_0.24.0          
+ [31] UpSetR_1.4.0             BiocSingular_1.0.0       scales_1.1.0            
+ [34] DOSE_3.10.2              DBI_1.1.0                edgeR_3.26.8            
+ [37] Rcpp_1.0.3               viridisLite_0.3.0        progress_1.2.2          
+ [40] gridGraphics_0.4-1       dqrng_0.2.1              bit_1.1-15.1            
+ [43] europepmc_0.3            rsvd_1.0.2               httr_1.4.1              
+ [46] fgsea_1.10.1             RColorBrewer_1.1-2       pkgconfig_2.0.3         
+ [49] farver_2.0.3             locfit_1.5-9.1           dynamicTreeCut_1.63-1   
+ [52] ggplotify_0.0.4          tidyselect_1.0.0         labeling_0.3            
+ [55] rlang_0.4.4              reshape2_1.4.3           AnnotationDbi_1.46.1    
+ [58] munsell_0.5.0            tools_3.6.1              RSQLite_2.2.0           
+ [61] ggridges_0.5.2           stringr_1.4.0            bit64_0.9-7             
+ [64] tidygraph_1.1.2          caTools_1.18.0           purrr_0.3.3             
+ [67] nlme_3.1-140             DO.db_2.9                xml2_1.2.2              
+ [70] compiler_3.6.1           beeswarm_0.2.3           statmod_1.4.33          
+ [73] tweenr_1.0.1             stringi_1.4.5            vctrs_0.2.2             
+ [76] pillar_1.4.3             lifecycle_0.1.0          BiocManager_1.30.10     
+ [79] triebeard_0.3.0          BiocNeighbors_1.2.0      data.table_1.12.8       
+ [82] cowplot_1.0.0            bitops_1.0-6             qvalue_2.16.0           
+ [85] R6_2.4.1                 KernSmooth_2.23-15       gridExtra_2.3           
+ [88] vipor_0.4.5              MASS_7.3-51.4            gtools_3.8.1            
+ [91] assertthat_0.2.1         withr_2.1.2              GenomeInfoDbData_1.2.1  
+ [94] mgcv_1.8-28              hms_0.5.3                grid_3.6.1              
+ [97] tidyr_1.0.2              DelayedMatrixStats_1.6.1 rvcheck_0.1.7           
+[100] ggforce_0.3.1            ggbeeswarm_0.6.0        
+> 
+
 
 
 

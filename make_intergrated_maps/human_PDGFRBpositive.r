@@ -113,15 +113,16 @@ if (length(mergethis) > 0) {
 
 #remove clusters with no differential gene expression
 sg = sortGenes(counts(l), class_info_merging, binarizeMethod="naive", cores = 16)
-removethis = c(names(which(apply(pp$adjpval,2,function(x) length(x[x<0.05])) == 0)), "en7") #en7 is endothelial cell doublets
-removethis = which(class_info_merging %in% removethis)
-
+removethis = names(which(apply(pp$adjpval,2,function(x) length(x[x<0.05])) == 0))
 
 #find pdgfrb low clusters and remove them
-pdgfrb_percent = sg$condGeneProb[which(rownames(sg$condGeneProb) == "ENSG00000113721.13;PDGFRB"),] * 100
+pdgfrb_percent = sg$condGeneProb[which(rownames(sg$condGeneProb) == "ENSG00000113721.13;PDGFRB"),-(which(colnames(sg$condGeneProb) %in% removethis))] * 100
 pdfgrb_cut = median(pdgfrb_percent) - (median(abs(pdgfrb_percent - median(pdgfrb_percent))) * 1)
 pdfgrb_cut = names(which(pdgfrb_percent < pdfgrb_cut))
+
+removethis = which(class_info_merging %in% removethis)
 removethis = unique(c(removethis, which(class_info_merging %in% pdfgrb_cut)))
+
 
 
 
@@ -139,10 +140,12 @@ l_remove = l_remove[choose_genes, ]
 
 
 
+
 #make table of healthy vs disease
 pdf(paste0(prefix, "percent_healthy_disease.pdf"))
-barplot((table(l_remove$kidney_function) / ncol(l_remove)) * 100, col = kf_col, ylim = c(0,70), yaxp = c(0,70,14), ylab = "% of Cells")
+barplot((table(l_remove$kidney_function) / ncol(l_remove)) * 100, col = rev(kf_col), ylim = c(0,70), yaxp = c(0,70,14), ylab = "% of Cells")
 dev.off()
+
 KFlow = rep(0,length(unique(class_info_merging_remove)))
 for (i in 1:length(unique(class_info_merging_remove))) {
 	where = which(class_info_merging_remove == unique(class_info_merging_remove)[i])
@@ -154,7 +157,6 @@ for (i in 1:length(unique(class_info_merging_remove))) {
 	}
 }
 names(KFlow) = unique(class_info_merging_remove)
-
 
 
 
@@ -252,6 +254,14 @@ for (i in 1:length(unique(l_remove$fileID))) {
 	colors_file[wtemp] = col_palette_trans[i]
 }
 
+library(RColorBrewer)
+nb.cols = length(unique(l_remove$level3))
+mycolors = colorRampPalette(brewer.pal(30, "Set2"))(nb.cols)
+colors_info_level3 = rep("", length = ncol(l_remove))
+for (i in 1:length(unique(l_remove$level3))) {
+	wtemp = which((l_remove$level3) == (sort(unique(l_remove$level3)))[i])
+	colors_info_level3[wtemp] = makeTransparent(mycolors[i])
+}
 
 
 
@@ -262,15 +272,12 @@ l_remove = scran::computeSumFactors(l_remove, sizes = seq(10, 200, 20), clusters
 l_remove = scater::normalize(l_remove)
 l_remove = scater::calculateQCMetrics(l_remove)
 a = plotExprsFreqVsMean(l_remove)
-l_v = l_remove[which(rownames(l_remove) %in% names(which(apply(pp$adjpval, 1, function(x) any(x < 0.05))))),]
-q = t(logcounts(l_v))
-q = t(apply(q,1, function(x) x-mean(x)))
-set.seed(111)
-sv = irlba(q, 50)
-d = sv$d
-dw = 18 #based on the knee of singular values
-dw = 1:dw
-temp = t(apply(sv$u[,dw], 1, function(x) x / (sqrt(sum(x^2)))))
+var_genes = names(which(apply(pp$adjpval, 1, function(x) any(x < 0.05))))
+
+mnn = batchelor::fastMNN(l_remove, batch = l_remove$fileID, d = 30, auto.order = TRUE, subset.row = var_genes, BSPARAM = BiocSingular::IrlbaParam(tol=1e-8))
+mnn_u = mnn@reducedDims$corrected
+temp = t(apply(mnn_u, 1, function(x) x / (sqrt(sum(x^2))))) #norm based scaling
+
 write.csv(temp, file = paste0(prefix, "dims.txt"), row.names = FALSE, col.names = FALSE) #file saved @https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/reducedDims/SVD/human_PDGFRBpositive_dims.txt
 
 
@@ -296,6 +303,13 @@ pdf(paste0(prefix, "UMAP_fileID.pdf"))
 plot(mapCoords[,1], mapCoords[,2], pch = 20, col = colors_file, cex = 0.3)
 legend(min(mapCoords[,1]) + 1, min(mapCoords[,2]) + 15, legend = abbreviate(unique(l_remove$fileID), minlength=6), pch=21, col = col_palette, pt.bg = col_palette_trans, pt.cex=2, cex=.8, bty="n", ncol = ceiling(length(unique(l_remove$fileID)) / 10))
 dev.off()
+pdf(paste0(prefix, "UMAP_clusterColors.pdf"))
+plot(mapCoords, col = colors_info_level3, pch = 20, cex = 0.3)
+legend(max(mapCoords[,1]) - 10, max(mapCoords[,2]), legend = abbreviate(sort(unique(l_remove$level3)), minlength=6), pch=21, col = mycolors, pt.bg = makeTransparent(mycolors), pt.cex=2, cex=.8, bty="n", ncol = ceiling(length(unique(l_remove$level3)) / 20))
+dev.off()
+
+
+
 
 
 
@@ -341,23 +355,22 @@ zzz = dev.off()
 
 
 #marker heatmaps
-level3_order = c(25, 22, 4:11, 18:20, 14:17, 24, 26, 23,1, 12, 3, 21, 13, 2)
-names1 = tolower(unlist(lapply(strsplit(as.character(rownames(l_remove)), split = ";", fixed = T), function(x) as.character(x[2]))))
-sg_heat = logcounts(l_remove)
-rownames(sg_heat) = names1
-sg_heat = sortGenes(sg_heat, sg_level3$inputClass, binarizeMethod = "naive", cores = 16)
-
-pdf(paste0(prefix, "manual_marks.pdf"))
-manual_marks = c("pdgfrb", "acta2", "itgb1")
-manual_marks2 = c("pdgfra","dcn", "frzb", "tagln", "fn1", "col1a1", "col1a2")
-plotBinaryHeat(sg_heat$binary, sg_heat$inputClass, markers = c(manual_marks, manual_marks2), averageCells=10^2, newOrder=level3_order, colors = colorRampPalette(c("white","dodgerblue4"))(n=100), gaps = TRUE)
-dev.off()
-tiff(paste0(prefix,"manual_marks.tiff"), res=300, height = 12, width = 12, units = "in")
-plotBinaryHeat(sg_heat$binary, sg_heat$inputClass, markers = c(manual_marks, manual_marks2), averageCells=10^2, newOrder=level3_order, colors = colorRampPalette(c("white","dodgerblue4"))(n=100), gaps = TRUE)
-dev.off()
-pdf(paste0(prefix, "level3_top_auto_markers_5.pdf"))
+level3_order = c(1,2,9,10,24,26,13,3,22,23,12,4,15,11,14,25,21,7,8,5,6,17,18,19,20,16)
+pdf(paste0(prefix, "level3_top_auto_markers_5.pdf"), height = 10)
 plotTopMarkerHeat(sg_level3, averageCells=10^2, newOrder=level3_order, colors = colorRampPalette(c("cornflowerblue", "black", "gold"))(n=100), gaps = TRUE, top_n=5)
 dev.off()
+
+
+
+#doublet scores
+pdf(paste0(prefix, "doubletScore_box.pdf"), width = 40, height = 10)
+exp = l_remove$doublet_score
+facts = factor(as.factor(l_remove$level3),levels(as.factor(l_remove$level3))[level3_order])
+plot(as.numeric(facts)+rnorm(length(exp), 0, 0.13), exp, pch = 20, xlab = "", ylab = "", cex = 0.3, main = "Doublet Score", col = "#99999920", xaxt = "n")
+axis(1, at=sort(unique(as.numeric(facts))), labels=abbreviate(levels(facts)))
+vioplot(as.vector(exp) ~ facts, col = makeTransparent("white", alpha = 0), border = makeTransparent("black", alpha = 0.3), range = 0.1, outline = F, add = T, notch = T, lwd = 4,  plotCentre="line", xlab = "Cell Clusters", ylab = "Doublet Score")
+dev.off()
+
 
 
 
@@ -368,33 +381,31 @@ dev.off()
 
 ww = c(which(l_remove$level2 %in% c("Fibroblasts", "Myofibroblasts","Pericytes")))
 l_v = l_remove[,ww]
-l_v$level3[which(l_v$level3 %in% c("Fibroblast 6a","Fibroblast 6b","Fibroblast 6c","Fibroblast 6d","Fibroblast 6e"))] = "Fibroblast 6" #we merge all  subclusters of this fibroblast subcluster
-
-
-#dimension reduction for mesenchymal (fibroblast-related) cells
 l_v = scran::computeSumFactors(l_v, sizes = seq(10, 200, 20), clusters = l_v$level3, positive = TRUE)
 l_v = scater::normalize(l_v)
+
 sg_mesen = sortGenes(counts(l_v), l_v$level3, binarizeMethod="naive", cores = 16)
 pp_mesen = getPValues(sg_mesen, numPerm = 20, cores = 16)
 marker_mesen = names(which(apply(pp_mesen$adjpval, 1, function(x) any(x < 0.05))))
-q = t(logcounts(l_v[which(rownames(l_v) %in% marker_mesen),]))
-q = t(apply(q,1, function(x) x-mean(x)))
-sv = svd(q)
-d = sv$d
-xx = 1:1000
-yy = d[1:1000]
-p1 = c(xx[1],yy[1])
-p2 = c(xx[length(xx)], yy[length(yy)])
-dw = which.max(sapply(1:length(yy), function(x) dist2d(c(xx[x], yy[x]), p1, p2)))
-dw = 1:dw
-temp = t(apply(sv$u[,dw], 1, function(x) x / (sqrt(sum(x^2))))) #norm based normalization
+sg_mesen_l2 = sortGenes(logcounts(l_v), l_v$level2, binarizeMethod="naive", cores = 16)
+pp_mesen_l2 = getPValues(sg_mesen_l2, numPerm = 20, cores = 16)
+marker_mesen_l2 = names(which(apply(pp_mesen_l2$adjpval, 1, function(x) any(x < 0.05))))
+
+
+#dimension reduction for mesenchymal (fibroblast-related) cells
+mnn = batchelor::fastMNN(l_v, batch = l_v$fileID, d = 30, auto.order = TRUE, subset.row = marker_mesen, BSPARAM = BiocSingular::IrlbaParam(tol=1e-8))
+mnn_u = mnn@reducedDims$corrected
+temp = t(apply(mnn_u, 1, function(x) x / (sqrt(sum(x^2)))))
 write.csv(temp, file = paste0(prefix, "dims_pseudotime.txt"), row.names = FALSE, col.names = FALSE)
+
+
+
 
 
 #marker heatmap fibro-zoom
 sg_lv_level3 = sortGenes(logcounts(l_v), l_v$level3, binarizeMethod="median")
 pdf(paste0(prefix, "fibrozoom_marker_heat.pdf"))
-plotTopMarkerHeat(sg_lv_level3, top_n=5, averageCells=10^2, newOrder=c(8,1,2,3,4,5,6,7), colors = colorRampPalette(c("cornflowerblue", "black", "gold"))(n=100))
+plotTopMarkerHeat(sg_lv_level3, top_n=5, averageCells=10^2, newOrder=c(10,1,2,3,4,8,9,6,7,5), colors = colorRampPalette(c("cornflowerblue", "black", "gold"))(n=100))
 dev.off()
 
 
@@ -409,10 +420,11 @@ cor_matrix = cor(t(combined_matrix))
 cor_vector = cor_matrix[,dim(cor_matrix)[1]]
 reads_single_phase_restricted = reads_single_phase[rownames(reads_single_phase) %in% names(cor_vector[cor_vector >= 0.1]),]
 aaa = apply(reads_single_phase_restricted,2,mean)
+ecm = aaa[ww]
 
 
-#UMAP-based#######################'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'#################################
-mapCoords = read.table("https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/reducedDims/UMAP/human_CD10negative_mesenchymal_umapCoords.csv", header = FALSE, sep=",") #generated in python
+#UMAP-based
+mapCoords = read.table("https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/reducedDims/UMAP/human_PDGFRBpositive_mesenchymal_umapCoords.csv", header = FALSE, sep=",") #generated in python
 
 #set the colors
 colors_info_mesenl3 = rep("", length = ncol(l_v))
@@ -448,7 +460,7 @@ plot(mapCoords, col = color.gradient(scale(aaa[ww]), colors = c("#ECECEC50",rev(
 dev.off()
 
 
-markersp = toupper(c("Pdgfrb", "Col1a1", "Col1a2", "Vim","Dcn","notch3","scara5","rspo3","pcolce2","postn","pdgfra","ogn","CCL19","adh1b","nkd2","col15a1", "CLMP", "ENTPD3", "SLC26A7"))
+hend_markers = toupper(c("Pdgfrb", "Col1a1", "Col1a2", "Vim","Dcn","notch3","scara5","rspo3","pcolce2","postn","pdgfra","ogn","CCL19","adh1b","nkd2","col15a1", "CLMP", "ENTPD3", "SLC26A7","RGS5","NDUFA4L2","HIGD1B","GJA4","COX4I2","MCAM","CPE","STEAP4","TM4SF1","GJC1","ADIRF","NOTCH3","IMPA2","PMEPA1","KLHL23","ADGRF5","PLAC9","ISYNA1","PTP4A3","ETV1","NKD2","IGFBP5","COL1A1","TF","IGF1R","IGF1R"))
 names1 = toupper(unlist(lapply(strsplit(as.character(rownames(l_remove)), split = ";", fixed = T), function(x) as.character(x[2]))))
 for (i in 1:length(markersp)) {
 	if(any(names1 == markersp[i])) {
@@ -461,20 +473,28 @@ for (i in 1:length(markersp)) {
 	}
 }
 
+
+
 library(slingshot)
 sl1 = slingshot(mapCoords, l_v$level3, start.clus = "Myofibroblasts 1")
 st1 = rowMeans(slingPseudotime(sl1), na.rm = TRUE)
-pdf(paste0(prefix, "pseudotime_specific_umap_pseudotime.pdf"))
+pdf(paste0(prefix, "pseudotime_umap_pseudotime.pdf"))
 col_pst = color.gradient(scale(-st1), colors = c("#ECECEC50",rev(c("#d7191c","#abdda4"))))
 plot(mapCoords, col = col_pst, pch = 20)
+dev.off()
+pdf(paste0(prefix, "pseudotime_umap_level3_withLineageTree.pdf"))
+plot(mapCoords, col = colors_info_mesenl3, pch = 20)
+legend(min(mapCoords[,1]), min(mapCoords[,2]) + 6, legend = sort(unique(l_v$level3)), pch=21, col = col_palette_trans, pt.bg = col_palette, pt.cex=2, cex=.8, bty="n", ncol = ceiling(length(unique(l_v$level3)) / 20))
+lines(sl1, lwd=5, col="#00000095", type = "lineages")
 dev.off()
 
 
 
-########diffusion map based
+
+#diffusion map based
 library(destiny) 
 set.seed(111)
-df = DiffusionMap(ss$u[,dw], k = 40, n_eigs = 3) 
+df = DiffusionMap(mnn_u, k = 80, n_eigs = 3)
 write.csv(df@eigenvectors, file = paste0(prefix, "dims_diffusionmap.txt"), row.names = FALSE, col.names = FALSE) #file now saved @https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/reducedDims/DM/human_PDGFRBpositive_dm.txt
 
 #get cell ordering
@@ -484,19 +504,31 @@ st2 = rowMeans(slingPseudotime(sl2), na.rm = TRUE)
 col_pst = color.gradient(scale(-st2), colors = c("#ECECEC50",rev(c("#d7191c","#abdda4"))))
 curv = getCurves(sl2)
 
-#plot 3D diffusion map
+
 library(plot3D)
 pdf(paste0(prefix, "pseudotime_specific_dm_level3.pdf"))
-scatter3D(df2[,1], df2[,2], -df2[,3], col = colors_info_mesenl3, pch = 20, cex = 0.5, colvar = NULL, bty = "n", phi = 00, theta = 310)
+scatter3D(df2[,1], df2[,2], df2[,3], col = colors_info_mesenl3, pch = 20, cex = 0.5, colvar = NULL, phi = 120, theta = 230, bty = "n")
+dev.off()
+pdf(paste0(prefix, "pseudotime_specific_dm_level3_bty.pdf"))
+scatter3D(df2[,1], df2[,2], df2[,3], col = colors_info_mesenl3, pch = 20, cex = 0.5, colvar = NULL, phi = 120, theta = 230) #90,310
 dev.off()
 pdf(paste0(prefix, "pseudotime_specific_dm_level2.pdf"))
-scatter3D(df2[,1], df2[,2], -df2[,3], col = colors_info_mesenl2, pch = 20, cex = 0.5, colvar = NULL, bty = "n", phi = 00, theta = 310)
+scatter3D(df2[,1], df2[,2], df2[,3], col = colors_info_mesenl2, pch = 20, cex = 0.5, colvar = NULL, bty = "n", phi = 120, theta = 230)
 dev.off()
 pdf(paste0(prefix, "pseudotime_specific_dm_pseudotime.pdf"))
-scatter3D(df2[,1], df2[,2], -df2[,3], col = col_pst, pch = 19, cex = 1, colvar = NULL, bty = "n", phi = 00, theta = 310)
+scatter3D(df2[,1], df2[,2], df2[,3], col = col_pst, pch = 19, cex = 0.8, colvar = NULL, bty = "n", phi = 120, theta = 230)
 dev.off()
 pdf(paste0(prefix, "pseudotime_specific_dm_ecm.pdf"))
-scatter3D(df2[,1], df2[,2], -df2[,3], col = color.gradient(scale(aaa[ww]), colors = c("#ECECEC50",rev(c("#d7191c","#abdda4")))), pch = 19, cex = 1, colvar = NULL, bty = "n", phi = 00, theta = 310)
+scatter3D(df2[,1], df2[,2], df2[,3], col = color.gradient(scale(aaa[ww]), colors = c("#ECECEC50",rev(c("#d7191c","#abdda4")))), pch = 19, cex = 1, colvar = NULL, bty = "n", phi = 120, theta = 230)
+dev.off()
+pdf(paste0(prefix, "pseudotime_specific_dm_kidneyFunction.pdf"))
+scatter3D(df2[,1], df2[,2], df2[,3], col = colors_info_kf[ww], pch = 19, cex = 0.8, colvar = NULL, bty = "n", phi = 120, theta = 230)
+dev.off()
+tiff(paste0(prefix,"pseudotime_specific_dm_lines.tiff"), res=300, height = 12, width = 12, units = "in")
+points3D(df2[,1], df2[,2], df2[,3], col = "#99999901", pch = 20, cex = 0.1, colvar = NULL, bty = "n", phi = 120, theta = 230, alpha = 0)
+lines3D(curv@curves$curve1$s[curv@curves$curve1$ord,1], curv@curves$curve1$s[curv@curves$curve1$ord,2], curv@curves$curve1$s[curv@curves$curve1$ord,3],  phi = 120, theta = 230, colvar = NULL, col = "#DE5246", lwd = 4, add = TRUE, alpha = 0.5)
+lines3D(curv@curves$curve2$s[curv@curves$curve2$ord,1], curv@curves$curve2$s[curv@curves$curve2$ord,2], curv@curves$curve2$s[curv@curves$curve2$ord,3],  phi = 120, theta = 230, colvar = NULL, col = "#DE5246", lwd = 4, add = TRUE, alpha = 0.5)
+lines3D(curv@curves$curve3$s[curv@curves$curve3$ord,1], curv@curves$curve3$s[curv@curves$curve3$ord,2], curv@curves$curve3$s[curv@curves$curve3$ord,3],  phi = 120, theta = 230, colvar = NULL, col = "#DE5246", lwd = 4, add = TRUE, alpha = 0.5)
 dev.off()
 
 
@@ -514,13 +546,6 @@ for (i in 1:length(markersp)) {
 }
 
 
-#plot lineage lines
-tiff(paste0(prefix,"pseudotime_specific_dm_lines.tiff"), res=300, height = 12, width = 12, units = "in")
-points3D(df2[,1], df2[,2], -df2[,3], col = colors_info_mesenl2, pch = 20, cex = 0.1, colvar = NULL, bty = "n", phi = 0, theta = 310, alpha = 0)
-lines3D(curv@curves$curve1$s[curv@curves$curve1$ord,1], curv@curves$curve1$s[curv@curves$curve1$ord,2], -curv@curves$curve1$s[curv@curves$curve1$ord,3],  phi = 0, theta = 30, colvar = NULL, col = "#DE5246", lwd = 4, add = TRUE, alpha = 0.5)
-lines3D(curv@curves$curve2$s[curv@curves$curve2$ord,1], curv@curves$curve2$s[curv@curves$curve2$ord,2], -curv@curves$curve2$s[curv@curves$curve2$ord,3],  phi = 0, theta = 3, colvar = NULL, col = "#DE5246", lwd = 4, add = TRUE, alpha = 0.5)
-lines3D(curv@curves$curve3$s[curv@curves$curve3$ord,1], curv@curves$curve3$s[curv@curves$curve3$ord,2], -curv@curves$curve3$s[curv@curves$curve3$ord,3],  phi = 0, theta = 310, colvar = NULL, col = "#DE5246", lwd = 4, add = TRUE, alpha = 0.5)
-dev.off()
 
 
 #get genes that are correlated with cell ordering for each lineage
@@ -542,13 +567,13 @@ kk = Mclust(-st[negSel,1], 5, modelNames="E")
 roses = logcounts(l_v[,negSel])
 l1 = plotMarkerHeat(roses[,order(st[negSel,1], decreasing = TRUE)], kk$classification[order(st[negSel,1], decreasing = TRUE)], names(time_test[[1]]), averageCells=10^1, clusterGenes = TRUE, clusterGenesK = 7, outs = TRUE, plotheat = FALSE) #cluster the genes
 gene_order = l1$gene_class_info #reorder gene clusters (manually for now)
-gene_order[l1$gene_class_info == 1] = 1
-gene_order[l1$gene_class_info == 2] = 4
-gene_order[l1$gene_class_info == 3] = 6
-gene_order[l1$gene_class_info == 4] = 5
-gene_order[l1$gene_class_info == 5] = 2
-gene_order[l1$gene_class_info == 6] = 7
-gene_order[l1$gene_class_info == 7] = 3
+gene_order[l1$gene_class_info == 1] = 7
+gene_order[l1$gene_class_info == 2] = 2
+gene_order[l1$gene_class_info == 3] = 4
+gene_order[l1$gene_class_info == 4] = 1
+gene_order[l1$gene_class_info == 5] = 3
+gene_order[l1$gene_class_info == 6] = 6
+gene_order[l1$gene_class_info == 7] = 5
 l1 = plotMarkerHeat(roses[,order(st[negSel,1], decreasing = TRUE)], kk$classification[order(st[negSel,1], decreasing = TRUE)], names(sort(gene_order)), averageCells=10^1, clusterGenes = FALSE, gaps = FALSE, colors = colorRampPalette(c("cornflowerblue","black","gold"))(n=100)) #make the heatmap with the new gene order
 go1 = gene_order
 dev.off()
@@ -558,17 +583,17 @@ dev.off()
 tiff(paste0(prefix,"pseudotime_heat_L2.tiff"), res=300, height = 12, width = 12, units = "in")
 negSel = which(!is.na(st[,2]))
 set.seed(111)
-kk = Mclust(-st[negSel,2], 5, modelNames="E")
+kk = Mclust(-st[negSel,2], 6, modelNames="E")
 roses = logcounts(l_v[,negSel])
 l2 = plotMarkerHeat(roses[,order(st[negSel,2], decreasing = TRUE)], kk$classification[order(st[negSel,2], decreasing = TRUE)], names(time_test[[2]]), averageCells=10^1, clusterGenes = TRUE, clusterGenesK = 7, outs = TRUE, plotheat = FALSE)
 gene_order = l2$gene_class_info
-gene_order[l2$gene_class_info == 1] = 5
-gene_order[l2$gene_class_info == 2] = 3
+gene_order[l2$gene_class_info == 1] = 3
+gene_order[l2$gene_class_info == 2] = 4
 gene_order[l2$gene_class_info == 3] = 2
-gene_order[l2$gene_class_info == 4] = 1
-gene_order[l2$gene_class_info == 5] = 7
-gene_order[l2$gene_class_info == 6] = 4
-gene_order[l2$gene_class_info == 7] = 6
+gene_order[l2$gene_class_info == 4] = 6
+gene_order[l2$gene_class_info == 5] = 1
+gene_order[l2$gene_class_info == 6] = 7
+gene_order[l2$gene_class_info == 7] = 5
 l2 = plotMarkerHeat(roses[,order(st[negSel,2], decreasing = TRUE)], kk$classification[order(st[negSel,2], decreasing = TRUE)], names(sort(gene_order)), averageCells=10^1, clusterGenes = FALSE, gaps = FALSE, colors = colorRampPalette(c("cornflowerblue","black","gold"))(n=100))
 go2 = gene_order
 dev.off()
@@ -582,19 +607,19 @@ kk = Mclust(-st[negSel,3], 5, modelNames="E")
 roses = logcounts(l_v[,negSel])
 l3 = plotMarkerHeat(roses[,order(st[negSel,3], decreasing = TRUE)], kk$classification[order(st[negSel,3], decreasing = TRUE)], names(time_test[[3]]), averageCells=10^1, clusterGenes = TRUE, clusterGenesK = 7, outs = TRUE, plotheat = FALSE)
 gene_order = l3$gene_class_info
-gene_order[l3$gene_class_info == 1] = 6
-gene_order[l3$gene_class_info == 2] = 7
-gene_order[l3$gene_class_info == 3] = 1
-gene_order[l3$gene_class_info == 4] = 4
-gene_order[l3$gene_class_info == 5] = 5
-gene_order[l3$gene_class_info == 6] = 2
-gene_order[l3$gene_class_info == 7] = 3
+gene_order[l3$gene_class_info == 1] = 3
+gene_order[l3$gene_class_info == 2] = 6
+gene_order[l3$gene_class_info == 3] = 4
+gene_order[l3$gene_class_info == 4] = 5
+gene_order[l3$gene_class_info == 5] = 7
+gene_order[l3$gene_class_info == 6] = 1
+gene_order[l3$gene_class_info == 7] = 2
 l3 = plotMarkerHeat(roses[,order(st[negSel,3], decreasing = TRUE)], kk$classification[order(st[negSel,3], decreasing = TRUE)], names(sort(gene_order)), averageCells=10^1, clusterGenes = FALSE, gaps = FALSE, colors = colorRampPalette(c("cornflowerblue","black","gold"))(n=100))
 go3 = gene_order
 dev.off()
 
 #export gene clustering information
-write.csv(data.frame(gene = names(go1), cluster = go1), file = paste0(prefix,"gene_cluster_info_L1.txt"), quote = FALSE, row.names = FALSE)
+write.csv(data.frame(gene = names(go1), cluster = go1), file = paste0(prefix,"gene_cluster_info_L1.txt"), quote = FALSE, row.names = FALSE) 
 write.csv(data.frame(gene = names(go2), cluster = go2), file = paste0(prefix,"gene_cluster_info_L2.txt"), quote = FALSE, row.names = FALSE)
 write.csv(data.frame(gene = names(go3), cluster = go3), file = paste0(prefix,"gene_cluster_info_L3.txt"), quote = FALSE, row.names = FALSE)
 
@@ -603,9 +628,9 @@ write.csv(data.frame(gene = names(go3), cluster = go3), file = paste0(prefix,"ge
 #cell cycle & GO along cell ordering
 library(tibble)
 library(clusterProfiler)
-G1_S = read.table("https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/public/cell_cycle/G1S")[[1]]
-G2_M = read.table("https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/public/cell_cycle/G2M")[[1]]
-G0 = read.table("https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/public/cell_cycle/G0")[[1]]
+G1_S = read.table("https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/public/cell_cycle/G1S_human")[[1]]
+G2_M = read.table("https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/public/cell_cycle/G2M_human")[[1]]
+G0 = read.table("https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/public/cell_cycle/G0_human")[[1]]
 cycle_list = list(G1_S, G2_M, G0)
 flexible_normalization <- function(data_in,by_row=TRUE){
   if(by_row){
@@ -652,8 +677,8 @@ colnames(ans) = c("G1_S", "G2_M", "G0")
 ans_normed <- flexible_normalization(ans,by_row=FALSE)
 ans_normed_normed <- flexible_normalization(ans_normed,by_row=TRUE)
 cell_phase = apply(ans_normed_normed,1,function(x) colnames(ans_normed_normed)[which.max(x)])
-n1 = seq(1,length(cell_phase), by = 500) #we group every 500 cells together
-n2 = n1 + 500
+n1 = seq(1,length(cell_phase), by = 2000)
+n2 = n1 + 2000
 n2[length(n2)] = length(cell_phase)
 n3 = n2
 for (i in 1:length(n2)) {
@@ -664,15 +689,15 @@ ballet = lapply(1:length(n1), function(x) table(cell_phase[(n1[x]):(n2[x])]) / l
 ballet = (matrix(unlist(ballet), byrow = TRUE, ncol = 3)) * 100
 colnames(ballet) = c("G0", "G1_S", "G2_M")
 pdf(paste0(prefix, "L1_cellcyle.pdf"))
-plot(n1, ballet[,1], type = "l", ylim = c(15,60), col = makeTransparent(col_palette_short[1], 0.9), lwd = 5, yaxp = c(15,60,9), xlab = "Cells ordered by pseudotime (Pericyte to MF)", ylab = "% of Cells")
+plot(n1, ballet[,1], type = "l", ylim = c(15,60), col = makeTransparent(col_palette_short[1], 0.9), lwd = 5, yaxp = c(15,60,9), xlab = "Cells ordered by pseudotime (Fib4 to MF1)", ylab = "% of Cells")
 lines(n1, ballet[,2], type = "l", col = makeTransparent(col_palette_short[2], 0.9), lwd = 5)
 lines(n1, ballet[,3], type = "l", col = makeTransparent(col_palette_short[4], 0.9), lwd = 5)
 legend("topright", legend = colnames(ballet), pch=15, col = col_palette_short[c(1,2,4)], bty = "n", cex = 1.5)
 dev.off()
-#Lineage 1 (gene ontology)
+#gene ontology
 sg_n3  = sortGenes(roses, n3, binarizeMethod = "naive")
 n3_l = plotTopMarkerHeat(sg_n3, averageCells=10^2, top_n=100, plotheat=FALSE, outs = TRUE)
-m_t2g =  as.tibble(read.gmt("https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/public/c2.cp.pid.v7.0.symbols.gmt"))
+m_t2g =  as.tibble(read.gmt("/home/mibrahim/Dropbox/dev/kidneyMap/public/assets/public/c2.cp.pid.v7.0.symbols.gmt"))
 en = mclapply(n3_l, function(x) enricher(x, TERM2GENE=m_t2g, minGSSize = 10, maxGSSize = 200, pvalueCutoff = 0.05), mc.cores = 12)
 en2 = list()
 for (i in 1:length(en)) {
@@ -698,7 +723,7 @@ heatmap.2(t(en4), trace = "none", scale = "none", col = colorRampPalette(c("whit
 dev.off()
 sg_n3  = sortGenes(roses, n3, binarizeMethod = "naive")
 n3_l = plotTopMarkerHeat(sg_n3, averageCells=10^2, top_n=100, plotheat=FALSE, outs = TRUE)
-m_t2g =  as.tibble(read.gmt("https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/public/c2.cp.kegg.v7.0.symbols.gmt"))
+m_t2g =  as.tibble(read.gmt("/home/mibrahim/Dropbox/dev/kidneyMap/public/assets/public/c2.cp.kegg.v7.0.symbols.gmt"))
 en = mclapply(n3_l, function(x) enricher(x, TERM2GENE=m_t2g, minGSSize = 10, maxGSSize = 200, pvalueCutoff = 0.05), mc.cores = 12)
 en2 = list()
 for (i in 1:length(en)) {
@@ -726,6 +751,7 @@ dev.off()
 
 
 
+
 #Lineage 2 (cell cycle)
 negSel = which(!is.na(st[,2]))
 set.seed(111)
@@ -749,8 +775,8 @@ colnames(ans) = c("G1_S", "G2_M", "G0")
 ans_normed <- flexible_normalization(ans,by_row=FALSE)
 ans_normed_normed <- flexible_normalization(ans_normed,by_row=TRUE)
 cell_phase = apply(ans_normed_normed,1,function(x) colnames(ans_normed_normed)[which.max(x)])
-n1 = seq(1,length(cell_phase), by = 500)
-n2 = n1 + 500
+n1 = seq(1,length(cell_phase), by = 2000)
+n2 = n1 + 2000
 n2[length(n2)] = length(cell_phase)
 n3 = n2
 for (i in 1:length(n2)) {
@@ -760,15 +786,15 @@ ballet = lapply(1:length(n1), function(x) table(cell_phase[(n1[x]):(n2[x])]) / l
 ballet = (matrix(unlist(ballet), byrow = TRUE, ncol = 3)) * 100
 colnames(ballet) = c("G0", "G1_S", "G2_M")
 pdf(paste0(prefix, "L2_cellcyle.pdf"))
-plot(n1, ballet[,1], type = "l", ylim = c(25,45), col = makeTransparent(col_palette_short[1], 0.9), lwd = 5, yaxp = c(25,45,4), xlab = "Cells ordered by pseudotime (PDGFRa Fib to MF)", ylab = "% of Cells")
+plot(n1, ballet[,1], type = "l", col = makeTransparent(col_palette_short[1], 0.9), lwd = 5, xlab = "Cells ordered by pseudotime (Pericytes to MF1)", ylab = "% of Cells", ylim = c(20,50))
 lines(n1, ballet[,2], type = "l", col = makeTransparent(col_palette_short[2], 0.9), lwd = 5)
 lines(n1, ballet[,3], type = "l", col = makeTransparent(col_palette_short[4], 0.9), lwd = 5)
 legend("topright", legend = colnames(ballet), pch=15, col = col_palette_short[c(1,2,4)], bty = "n", cex = 1.5)
 dev.off()
-#Lineage 2 (gene ontology)
+#gene ontology
 sg_n3  = sortGenes(roses, n3, binarizeMethod = "naive")
 n3_l = plotTopMarkerHeat(sg_n3, averageCells=10^2, top_n=100, plotheat=FALSE, outs = TRUE)
-m_t2g =  as.tibble(read.gmt("https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/public/c2.cp.pid.v7.0.symbols.gmt"))
+m_t2g =  as.tibble(read.gmt("/home/mibrahim/Dropbox/dev/kidneyMap/public/assets/public/c2.cp.pid.v7.0.symbols.gmt"))
 en = mclapply(n3_l, function(x) enricher(x, TERM2GENE=m_t2g, minGSSize = 10, maxGSSize = 200, pvalueCutoff = 0.05), mc.cores = 12)
 en2 = list()
 for (i in 1:length(en)) {
@@ -792,6 +818,35 @@ rownames(en4) = en3[[1]]
 pdf(paste0(prefix, "PID_Lineage2.pdf"), width = 10, height = 10)
 heatmap.2(t(en4), trace = "none", scale = "none", col = colorRampPalette(c("white","dodgerblue4"))(n=100), margins = c(20,25), density = "none", Colv = NA, key = FALSE, labCol = names(n3_l))
 dev.off()
+sg_n3  = sortGenes(roses, n3, binarizeMethod = "naive")
+n3_l = plotTopMarkerHeat(sg_n3, averageCells=10^2, top_n=100, plotheat=FALSE, outs = TRUE)
+m_t2g =  as.tibble(read.gmt("/home/mibrahim/Dropbox/dev/kidneyMap/public/assets/public/c2.cp.kegg.v7.0.symbols.gmt"))
+en = mclapply(n3_l, function(x) enricher(x, TERM2GENE=m_t2g, minGSSize = 10, maxGSSize = 200, pvalueCutoff = 0.05), mc.cores = 12)
+en2 = list()
+for (i in 1:length(en)) {
+	en2[[i]] =  en[[i]]@result$ID[1:5]
+}
+en2 = unique(unlist(en2))
+en3 = list()
+for (i in 1:length(en)) {
+	en3[[i]] =  cbind(i, en[[i]]@result$ID[which(en[[i]]@result$ID %in% en2)], -log10(as.numeric(en[[i]]@result$qvalue[which(en[[i]]@result$ID %in% en2)])))
+}
+en3 = data.frame(do.call(rbind, en3))
+en3 = data.frame(en3$i, en3$V2, en3$V3)
+colnames(en3) = c("Cluster", "Term", "PValue")
+en3 = reshape(en3, idvar = "Cluster", timevar = "Term", direction = "wide")
+en4 = data.frame(en3[2:length(en3)])
+en4 = as.matrix(en4)
+en4[which(is.na(en4))] = "0"
+en4 = apply(en4, 2, as.numeric)
+en4[which(en4 > -log10(0.0001))] = -log10(0.0001)
+rownames(en4) = en3[[1]]
+pdf(paste0(prefix, "KEGG_Lineage2.pdf"), width = 10, height = 10)
+heatmap.2(t(en4), trace = "none", scale = "none", col = colorRampPalette(c("white","dodgerblue4"))(n=100), margins = c(20,25), density = "none", Colv = NA, key = FALSE, labCol = names(n3_l))
+dev.off()
+
+
+
 
 
 
@@ -818,8 +873,8 @@ colnames(ans) = c("G1_S", "G2_M", "G0")
 ans_normed <- flexible_normalization(ans,by_row=FALSE)
 ans_normed_normed <- flexible_normalization(ans_normed,by_row=TRUE)
 cell_phase = apply(ans_normed_normed,1,function(x) colnames(ans_normed_normed)[which.max(x)])
-n1 = seq(1,length(cell_phase), by = 500)
-n2 = n1 + 500
+n1 = seq(1,length(cell_phase), by = 2000)
+n2 = n1 + 2000
 n2[length(n2)] = length(cell_phase)
 n3 = n2
 for (i in 1:length(n2)) {
@@ -829,15 +884,15 @@ ballet = lapply(1:length(n1), function(x) table(cell_phase[(n1[x]):(n2[x])]) / l
 ballet = (matrix(unlist(ballet), byrow = TRUE, ncol = 3)) * 100
 colnames(ballet) = c("G0", "G1_S", "G2_M")
 pdf(paste0(prefix, "L3_cellcyle.pdf"))
-plot(n1, ballet[,1], type = "l", ylim = c(20,40), col = makeTransparent(col_palette_short[1], 0.9), lwd = 5, yaxp = c(20,40,4), xlab = "Cells ordered by pseudotime (RSPO3 Fib to MF)", ylab = "% of Cells")
+plot(n1, ballet[,1], type = "l", col = makeTransparent(col_palette_short[1], 0.9), lwd = 5, xlab = "Cells ordered by pseudotime (Fib2 to MF1)", ylab = "% of Cells", ylim = c(25,45))
 lines(n1, ballet[,2], type = "l", col = makeTransparent(col_palette_short[2], 0.9), lwd = 5)
 lines(n1, ballet[,3], type = "l", col = makeTransparent(col_palette_short[4], 0.9), lwd = 5)
 legend("bottomright", legend = colnames(ballet), pch=15, col = col_palette_short[c(1,2,4)], bty = "n", cex = 1.5)
 dev.off()
-#Lineage 3 (gene ontology)
+#gene ontology
 sg_n3  = sortGenes(roses, n3, binarizeMethod = "naive")
 n3_l = plotTopMarkerHeat(sg_n3, averageCells=10^2, top_n=100, plotheat=FALSE, outs = TRUE)
-m_t2g =  as.tibble(read.gmt("/home/mibrahim/Dropbox/Kidney_Interstitium_collab_Henderson/Public_data/MSigDB/c2.cp.pid.v7.0.symbols.gmt"))
+m_t2g =  as.tibble(read.gmt("/home/mibrahim/Dropbox/dev/kidneyMap/public/assets/public/c2.cp.pid.v7.0.symbols.gmt"))
 en = mclapply(n3_l, function(x) enricher(x, TERM2GENE=m_t2g, minGSSize = 10, maxGSSize = 200, pvalueCutoff = 0.05), mc.cores = 12)
 en2 = list()
 for (i in 1:length(en)) {
@@ -861,6 +916,267 @@ rownames(en4) = en3[[1]]
 pdf(paste0(prefix, "PID_Lineage3.pdf"), width = 10, height = 10)
 heatmap.2(t(en4), trace = "none", scale = "none", col = colorRampPalette(c("white","dodgerblue4"))(n=100), margins = c(20,25), density = "none", Colv = NA, key = FALSE, labCol = names(n3_l))
 dev.off()
+sg_n3  = sortGenes(roses, n3, binarizeMethod = "naive")
+n3_l = plotTopMarkerHeat(sg_n3, averageCells=10^2, top_n=100, plotheat=FALSE, outs = TRUE)
+m_t2g =  as.tibble(read.gmt("/home/mibrahim/Dropbox/dev/kidneyMap/public/assets/public/c2.cp.kegg.v7.0.symbols.gmt"))
+en = mclapply(n3_l, function(x) enricher(x, TERM2GENE=m_t2g, minGSSize = 10, maxGSSize = 200, pvalueCutoff = 0.05), mc.cores = 12)
+en2 = list()
+for (i in 1:length(en)) {
+	en2[[i]] =  en[[i]]@result$ID[1:5]
+}
+en2 = unique(unlist(en2))
+en3 = list()
+for (i in 1:length(en)) {
+	en3[[i]] =  cbind(i, en[[i]]@result$ID[which(en[[i]]@result$ID %in% en2)], -log10(as.numeric(en[[i]]@result$qvalue[which(en[[i]]@result$ID %in% en2)])))
+}
+en3 = data.frame(do.call(rbind, en3))
+en3 = data.frame(en3$i, en3$V2, en3$V3)
+colnames(en3) = c("Cluster", "Term", "PValue")
+en3 = reshape(en3, idvar = "Cluster", timevar = "Term", direction = "wide")
+en4 = data.frame(en3[2:length(en3)])
+en4 = as.matrix(en4)
+en4[which(is.na(en4))] = "0"
+en4 = apply(en4, 2, as.numeric)
+en4[which(en4 > -log10(0.0001))] = -log10(0.0001)
+rownames(en4) = en3[[1]]
+pdf(paste0(prefix, "KEGG_Lineage3.pdf"), width = 10, height = 10)
+heatmap.2(t(en4), trace = "none", scale = "none", col = colorRampPalette(c("white","dodgerblue4"))(n=100), margins = c(20,25), density = "none", Colv = NA, key = FALSE, labCol = names(n3_l))
+dev.off()
+
+
+
+#AP1 analysis
+matrisome_set = read.table("https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/public/ecm_genes_human.txt", sep = "\t", header = TRUE)
+collagens = matrisome_set$Gene.Symbol[which(matrisome_set$Category %in% c("Collagens"))]
+reads_single_phase = logcounts(l_remove)
+rownames(reads_single_phase) = toupper(unlist(lapply(strsplit(as.character(rownames(reads_single_phase)), split = ";", fixed = T), function(x) as.character(x[2]))))
+reads_single_phase = as.matrix(reads_single_phase[rownames(reads_single_phase) %in% toupper(collagens) ,])
+combined_matrix = rbind(reads_single_phase,average=apply(reads_single_phase,2,mean))
+cor_matrix = cor(t(combined_matrix))
+cor_vector = cor_matrix[,dim(cor_matrix)[1]]
+reads_single_phase_restricted = reads_single_phase[rownames(reads_single_phase) %in% names(cor_vector[cor_vector >= 0.1]),]
+aaa = apply(reads_single_phase_restricted,2,mean)
+ecm = aaa[ww]
+
+
+library(ggpubr)
+ap1 = grep("^JUN|^FOS", dorothea_hs$tf, value=T)
+collagens = ap1
+reads_single_phase = logcounts(l_remove)
+rownames(reads_single_phase) = toupper(unlist(lapply(strsplit(as.character(rownames(reads_single_phase)), split = ";", fixed = T), function(x) as.character(x[2]))))
+reads_single_phase = as.matrix(reads_single_phase[rownames(reads_single_phase) %in% toupper(collagens) ,])
+combined_matrix = rbind(reads_single_phase,average=apply(reads_single_phase,2,mean))
+cor_matrix = cor(t(combined_matrix))
+cor_vector = cor_matrix[,dim(cor_matrix)[1]]
+reads_single_phase_restricted = reads_single_phase[rownames(reads_single_phase) %in% names(cor_vector[cor_vector >= 0.1]),]
+aaa = apply(reads_single_phase_restricted,2,mean)
+aaa = aaa[ww]
+pdf(paste0(prefix, "ap1_score_collagen_score.pdf"), width = 14)
+www = which(l_v$level2 == "Pericytes")
+df = data.frame(y=aaa[www],x=ecm[www]) #ecm is 
+o1 <- ggplot(df, aes(x, y)) +
+  geom_point(alpha = 0.15, col = colors_info_mesenl3[www]) +
+  geom_density_2d(col = "#00000080") + 
+   lims(x= c(0.1,2.2), y = c(0.1,5)) + 
+	theme_bw()
+www = which(l_v$level2 == "Fibroblasts")
+df = data.frame(y=aaa[www],x=ecm[www])
+o2 <- ggplot(df, aes(x, y)) +
+  geom_point(alpha = 0.15, col = colors_info_mesenl3[www]) +
+  geom_density_2d(col = "#00000080") + 
+   lims(x= c(0.1,2.2), y = c(0.1,5)) + 
+	theme_bw()
+www = which(l_v$level2 == "Myofibroblasts")
+df = data.frame(y=aaa[www],x=ecm[www])
+o3 <- ggplot(df, aes(x, y)) +
+  geom_point(alpha = 0.15, col = colors_info_mesenl3[www]) +
+  geom_density_2d(col = "#00000080") + 
+   lims(x= c(0.1,2.2), y = c(0.1,5)) + 
+	theme_bw()
+ggarrange(o1,o2,o3,ncol = 3, nrow = 1, labels = c("Peri","Fib","MF"))
+dev.off()
+
+
+
+ap1 = grep("^JUN|^FOS", dorothea_hs$tf, value=T)
+ap1 = which(dorothea_hs$tf %in% ap1)
+ap1 = dorothea_hs[ap1,]
+ap1 = ap1[which(ap1$confidence == "A"),]
+ap1 = ap1[which(ap1$mor == 1),]
+ap1 = sort(unique(ap1$target))
+collagens = ap1
+reads_single_phase = logcounts(l_remove)
+rownames(reads_single_phase) = toupper(unlist(lapply(strsplit(as.character(rownames(reads_single_phase)), split = ";", fixed = T), function(x) as.character(x[2]))))
+reads_single_phase = as.matrix(reads_single_phase[rownames(reads_single_phase) %in% toupper(collagens) ,])
+combined_matrix = rbind(reads_single_phase,average=apply(reads_single_phase,2,mean))
+cor_matrix = cor(t(combined_matrix))
+cor_vector = cor_matrix[,dim(cor_matrix)[1]]
+reads_single_phase_restricted = reads_single_phase[rownames(reads_single_phase) %in% names(cor_vector[cor_vector >= 0.1]),]
+aaa = apply(reads_single_phase_restricted,2,mean)
+aaa = aaa[ww]
+pdf(paste0(prefix, "ap1_score_collagen_score_doro.pdf"), width = 14)
+www = which(l_v$level2 == "Pericytes")
+df = data.frame(y=aaa[www],x=ecm[www])
+o1 <- ggplot(df, aes(x, y)) +
+  geom_point(alpha = 0.15, col = colors_info_mesenl3[www]) +
+  geom_density_2d(col = "#00000080") + 
+   lims(x= c(0.1,2.2), y = c(0.1,1.2)) + 
+	theme_bw()
+www = which(l_v$level2 == "Fibroblasts")
+df = data.frame(y=aaa[www],x=ecm[www])
+o2 <- ggplot(df, aes(x, y)) +
+  geom_point(alpha = 0.15, col = colors_info_mesenl3[www]) +
+  geom_density_2d(col = "#00000080") + 
+   lims(x= c(0.1,2.2), y = c(0.1,1.2)) + 
+	theme_bw()
+www = which(l_v$level2 == "Myofibroblasts")
+df = data.frame(y=aaa[www],x=ecm[www])
+o3 <- ggplot(df, aes(x, y)) +
+  geom_point(alpha = 0.15, col = colors_info_mesenl3[www]) +
+  geom_density_2d(col = "#00000080") + 
+   lims(x= c(0.1,2.2), y = c(0.1,1.2)) + 
+	theme_bw()
+ggarrange(o1,o2,o3,ncol = 3, nrow = 1, labels = c("Peri","Fib","MF"))
+dev.off()
+
+
+
+
+#Nkd2 analysis
+ll = logcounts(l_v)
+ll = apply(ll, 1, function(x) x/(sqrt(sum(x^2))))
+ll = t(ll)
+rownames(ll) = toupper(unlist(lapply(strsplit(as.character(rownames(ll)), split = ";", fixed = T), function(x) as.character(x[2]))))
+ll = ll[!duplicated(rownames(ll)),]
+
+nk = as.vector(ll[which(rownames(ll) == "NKD2"),])
+corr = apply(ll, 1, function(x) cor(x, nk))
+
+top = head(names(sort(corr, decreasing = TRUE)), n = 100)
+bottom = head(names(sort(corr, decreasing = FALSE)), n = 100)
+write(c(top, bottom), file = paste0(prefix, "_NKD2_geneList.csv"), ncolumns = 1)
+
+
+ng = list("correlated" = top, "anti-correlated" = bottom)
+msig = msigdbr::msigdbr(species = "Homo sapiens", category = "C2")
+msig = data.frame(msig$gs_name[which(msig$gs_subcat == "CP:PID")], msig$gene_symbol[which(msig$gs_subcat == "CP:PID")])
+en = mclapply(ng, function(x) enricher(x, TERM2GENE=msig, minGSSize = 10, maxGSSize = 200, pvalueCutoff = 0.05), mc.cores = 2)
+en2 = list()
+for (i in 1:length(en)) {
+	en2[[i]] =  en[[i]]@result$ID[1:5]
+}
+en2 = unique(unlist(en2))
+en3 = list()
+for (i in 1:length(en)) {
+	en3[[i]] =  cbind(i, en[[i]]@result$ID[which(en[[i]]@result$ID %in% en2)], -log10(as.numeric(en[[i]]@result$qvalue[which(en[[i]]@result$ID %in% en2)])))
+}
+en3 = data.frame(do.call(rbind, en3))
+en3 = data.frame(en3$i, en3$V2, en3$V3)
+colnames(en3) = c("Cluster", "Term", "PValue")
+en3 = reshape(en3, idvar = "Cluster", timevar = "Term", direction = "wide")
+en4 = data.frame(en3[2:length(en3)])
+en4 = as.matrix(en4)
+en4[which(is.na(en4))] = "0"
+en4 = apply(en4, 2, as.numeric)
+en4[which(en4 > -log10(0.0001))] = -log10(0.0001)
+rownames(en4) = en3[[1]]
+pdf(paste0(prefix, "PID_NKD2.pdf"), width = 10, height = 10)
+heatmap.2(t(en4), trace = "none", scale = "none", col = colorRampPalette(c("white","dodgerblue4"))(n=100), margins = c(20,25), density = "none", key = FALSE, labCol = names(ng), Colv = NA)
+dev.off()
+
+
+
+top = head(names(sort(corr, decreasing = TRUE)), n = 100)
+bottom = head(names(sort(corr, decreasing = FALSE)), n = 100)
+ng = list("correlated" = top, "anti-correlated" = bottom)
+msig = msigdbr::msigdbr(species = "Homo sapiens", category = "C2")
+msig = data.frame(msig$gs_name[which(msig$gs_subcat == "CP:KEGG")], msig$gene_symbol[which(msig$gs_subcat == "CP:KEGG")])
+cp = clusterProfiler::compareCluster(geneCluster = ng, fun = "enricher", TERM2GENE = msig)
+en = mclapply(ng, function(x) enricher(x, TERM2GENE=msig, minGSSize = 10, maxGSSize = 200, pvalueCutoff = 0.05), mc.cores = 2)
+en2 = list()
+for (i in 1:length(en)) {
+	en2[[i]] =  en[[i]]@result$ID[1:5]
+}
+en2 = unique(unlist(en2))
+en3 = list()
+for (i in 1:length(en)) {
+	en3[[i]] =  cbind(i, en[[i]]@result$ID[which(en[[i]]@result$ID %in% en2)], -log10(as.numeric(en[[i]]@result$qvalue[which(en[[i]]@result$ID %in% en2)])))
+}
+en3 = data.frame(do.call(rbind, en3))
+en3 = data.frame(en3$i, en3$V2, en3$V3)
+colnames(en3) = c("Cluster", "Term", "PValue")
+en3 = reshape(en3, idvar = "Cluster", timevar = "Term", direction = "wide")
+en4 = data.frame(en3[2:length(en3)])
+en4 = as.matrix(en4)
+en4[which(is.na(en4))] = "0"
+en4 = apply(en4, 2, as.numeric)
+en4[which(en4 > -log10(0.0001))] = -log10(0.0001)
+rownames(en4) = en3[[1]]
+pdf(paste0(prefix, "KEGG_NKD2.pdf"), width = 10, height = 10)
+heatmap.2(t(en4), trace = "none", scale = "none", col = colorRampPalette(c("white","dodgerblue4"))(n=100), margins = c(20,25), density = "none", key = FALSE, labCol = names(ng), cexRow = 0.8, cexCol = 0.8, Colv = NA)
+dev.off()
+
+
+pdf(paste0(prefix, "NKD2_correlated_genes.pdf"), height = 15)
+plotMarkerHeat(ll, l_v$level2, unlist(ng), averageCells=10^3, clusterGenes = TRUE, newOrder = c(3,1,2), colors = colorRampPalette(c("cornflowerblue","black","gold"))(n=100))
+dev.off()
+pdf(paste0(prefix, "NKD2_select_genes.pdf"))
+plotMarkerHeat(ll, l_v$level2, c(head(ng[[1]], 11), head(ng[[2]], 10)), averageCells=10^3, clusterGenes = TRUE, newOrder = c(3,1,2), colors = colorRampPalette(c("cornflowerblue","black","gold"))(n=100))
+dev.off()
+
+
+
+library(igraph)
+library(ggraph)
+library(tibble)
+library(clusterProfiler)
+col_palette = c("#d64e3c","#8641c6","#7778cb","#59803d","#d04d9c","#73d6a8","#492f60","#ccc497","#7f343b","#72acc0","#b97d40","#c796b5","#45483a","purple","green","yellow")
+l= read.table("HumanPDGFRBpositive_Nkd2_grnboost2.csv")
+l = l[which(l$V3 > 10),]
+gg = graph_from_data_frame(l)
+E(gg)$weight = log10(l$V3)
+gg2 = as.undirected(gg)
+cl = cluster_louvain(gg2)
+pdf("NKD2_geneList_net.pdf", width = 10, height = 10)
+set.seed(111)
+lay = ggraph::create_layout(gg, layout = "fr")
+ggraph(lay) + 
+  geom_edge_link(aes(alpha = E(gg)$weight / 10), edge_colour = "gray") + 
+  geom_node_point(aes(), colour = "#99999910") + 
+  geom_node_text(aes(label = V(gg)$name), repel=TRUE, cex = 5, color = col_palette[cl$membership]) +
+  theme(panel.background = element_blank())
+dev.off()
+df = data.frame("gene" = V(gg)$name, "cluster" = cl$membership)
+write.csv(df, "HumanPDGFRBpositive_Nkd2_grnboost2_netClusters.csv")
+df = list("1" = as.character(df$gene[which(df$cluster == 1)]), "2" = as.character(df$gene[which(df$cluster == 2)]), "3" = as.character(df$gene[which(df$cluster == 3)]), "4" = as.character(df$gene[which(df$cluster == 4)]))
+gg_myofib = induced_subgraph(gg, which(cl$membership == 2))
+nkd2_edges = apply(as.data.frame(get.edgelist(gg_myofib)), 1, function(x) any(x%in%c("NKD2")))
+pdf("NKD2_geneList_net_Myofibroblast.pdf", width = 12, height = 10)
+set.seed(111)
+lay = ggraph::create_layout(gg_myofib, layout = "fr")
+ggraph(lay) + 
+  geom_edge_link(aes(col = as.factor(nkd2_edges))) + 
+  scale_edge_colour_manual(values = c("#99999920","#d64e3c")) + 
+  geom_node_point(aes(), colour = "#99999910") + 
+  geom_node_text(aes(label = V(gg_myofib)$name), repel=TRUE, cex = 5, color = "black") +
+  theme(panel.background = element_blank())
+dev.off()
+
+
+
+
+
+#save output
+writeMM(counts(l_remove), file = paste0(prefix, "UMI_counts.mtx"))
+names1 = toupper(unlist(lapply(strsplit(as.character(rownames(l_remove)), split = ";", fixed = T), function(x) as.character(x[2]))))
+names2 = toupper(unlist(lapply(strsplit(as.character(rownames(l_remove)), split = ";", fixed = T), function(x) as.character(x[1]))))
+names2 = toupper(unlist(lapply(strsplit(as.character(names2), split = ".", fixed = T), function(x) as.character(x[1]))))
+rowdat = cbind(names1, names2)
+colnames(rowdat) = c("Gene.Symbol","ENSEMBL.ID")
+write.table(rowdat, file = paste0(prefix, "UMI_counts_rowData.txt"), sep = "\t", row.names=FALSE, quote = FALSE)
+coldat = cbind(l_remove$level1, l_remove$level2, l_remove$level3, l_remove$kidney_function, l_remove$fileID)
+colnames(coldat) = c("Annotation.Level.1","Annotation.Level.2","Annotation.Level.3","Kidney.Function","Patient ID")
+write.table(coldat, file = paste0(prefix, "UMI_counts_colData.txt"), sep = "\t", row.names=FALSE, quote = FALSE)
 
 
 
