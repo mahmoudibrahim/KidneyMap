@@ -117,7 +117,7 @@ for (i in 1:length(mergeMap)) {
 
 #remove clusters with no differential gene expression
 sg = sortGenes(counts(l), class_info_merging, binarizeMethod="naive", cores = 16)
-removethis = c(names(which(apply(pp$adjpval,2,function(x) length(x[x<0.05])) == 0)), "en9") #en9 based on top marker genes (ribo proteins)
+removethis = names(which(apply(pp$adjpval,2,function(x) length(x[x<0.05])) == 0))
 removethis = which(class_info_merging %in% removethis)
 
 
@@ -229,6 +229,33 @@ dev.off()
 pdf(paste0(prefix, "kegg_KidneyFunction_bar.pdf"), width = 10, height = 10)
 barplot(matrix(as.numeric(t(en3[,c(2,3,4)])),nrow = 2, byrow = TRUE), beside=TRUE, horiz=TRUE, col = rev(c("#99999995","#fc8d6295")), xlim = c(0,10), xlab = "-log10(q-value)")
 dev.off()
+#GO-BP
+m_t2g =  as.tibble(read.gmt("https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/public/c5.bp.v7.1.symbols.gmt"))
+en = mclapply(ng, function(x) enricher(x, TERM2GENE=m_t2g, minGSSize = 100, maxGSSize = 500, pvalueCutoff = 0.05), mc.cores = 12)
+en2 = list()
+for (i in 1:length(en)) {
+	en2[[i]] =  en[[i]]@result$ID[1:5]
+}
+en2 = unique(unlist(en2))
+en3 = list()
+for (i in 1:length(en)) {
+	en3[[i]] =  cbind(i, en[[i]]@result$ID[which(en[[i]]@result$ID %in% en2)], -log10(as.numeric(en[[i]]@result$qvalue[which(en[[i]]@result$ID %in% en2)])))
+}
+en3 = data.frame(do.call(rbind, en3))
+en3 = data.frame(en3$i, en3$V2, en3$V3)
+colnames(en3) = c("Cluster", "Term", "PValue")
+en3 = reshape(en3, idvar = "Cluster", timevar = "Term", direction = "wide")
+en4 = data.frame(en3[2:length(en3)])
+en4 = as.matrix(en4)
+en4[which(is.na(en4))] = "0"
+en4 = apply(en4, 2, as.numeric)
+en4[which(en4 > -log10(0.0001))] = -log10(0.0001)
+rownames(en4) = en3[[1]]
+pdf(paste0(prefix, "bp_KidneyFunction.pdf"), width = 10, height = 10)
+heatmap.2(t(en4), trace = "none", scale = "none", col = colorRampPalette(c("white","dodgerblue4"))(n=100), margins = c(20,30), density = "none", Colv = NA, key = FALSE, labCol = names(ng), cexRow =1)
+dev.off()
+
+
 
 
 
@@ -286,6 +313,14 @@ for (i in 1:length(unique(l_remove$patientID))) {
 	wtemp = which((l_remove$patientID) == (sort(unique(l_remove$patientID)))[i])
 	colors_patient[wtemp] = col_palette_trans[i]
 }
+library(RColorBrewer)
+nb.cols = length(unique(l_remove$level3))
+mycolors = colorRampPalette(brewer.pal(30, "Set2"))(nb.cols)
+colors_info_level3 = rep("", length = ncol(l_remove))
+for (i in 1:length(unique(l_remove$level3))) {
+	wtemp = which((l_remove$level3) == (sort(unique(l_remove$level3)))[i])
+	colors_info_level3[wtemp] = makeTransparent(mycolors[i])
+}
 
 
 
@@ -298,25 +333,10 @@ l_remove = scater::calculateQCMetrics(l_remove)
 a = plotExprsFreqVsMean(l_remove)
 
 #MNN is used here for visualization
-kk = floor(sqrt(ncol(l_remove)) * 1) * ncol(l_remove)
-newOrder = order(table(l_remove$fileID), decreasing = TRUE)
 var_genes = names(which(apply(pp$adjpval, 1, function(x) any(x < 0.05))))
-mnn = mnnCorrect(as.matrix(logcounts(l_remove[,which(l_remove$fileID == (unique(l_remove$fileID)[1]))])), as.matrix(logcounts(l_remove[,which(l_remove$fileID == (unique(l_remove$fileID)[2]))])), as.matrix(logcounts(l_remove[,which(l_remove$fileID == (unique(l_remove$fileID)[3]))])), as.matrix(logcounts(l_remove[,which(l_remove$fileID == (unique(l_remove$fileID)[4]))])), as.matrix(logcounts(l_remove[,which(l_remove$fileID == (unique(l_remove$fileID)[5]))])), as.matrix(logcounts(l_remove[,which(l_remove$fileID == (unique(l_remove$fileID)[6]))])), k = 139, subset.row=var_genes, cos.norm.out=FALSE, order = newOrder, cos.norm.in=TRUE)
-l_bc = cbind(mnn$corrected[[1]], mnn$corrected[[2]], mnn$corrected[[3]], mnn$corrected[[4]], mnn$corrected[[5]], mnn$corrected[[6]])
-l_bc = SingleCellExperiment(assays=list(logcounts=l_bc))
-l_bc$colData = l_remove$colData
-	
-
-#reduce dimensions of MNN-corrected expression
-l_v = l_bc[which(rownames(l_bc) %in% names(which(apply(pp$adjpval, 1, function(x) any(x < 0.05))))),]
-q = t(logcounts(l_v))
-q = t(apply(q,1, function(x) x-mean(x)))
-set.seed(111)
-sv = irlba(q, 50)
-d = sv$d
-dw = 13 #based on the knee of the singular values
-dw = 1:dw
-temp = t(apply(ss$u[,dw], 1, function(x) x / (sqrt(sum(x^2)))))
+mnn_u = batchelor::fastMNN(l_remove, batch = l_remove$fileID, d = 30, auto.order = TRUE, subset.row = var_genes, BSPARAM = BiocSingular::IrlbaParam(tol=1e-8))
+mnn_u = mnn_u@reducedDims$corrected
+temp = t(apply(mnn_u, 1, function(x) x / (sqrt(sum(x^2)))))
 write.csv(temp, file = paste0(prefix, "dims.txt"), row.names = FALSE, col.names = FALSE) #file saved @https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/reducedDims/SVD/human_CD10positive_dims.txt
 
 
@@ -346,12 +366,18 @@ howmany = table(l_remove$level3, l_remove$kidney_function)
 howmany = t(apply(howmany, 1, function(x) x/sum(x)))
 heatmap.2(howmany, trace = "none", col = colorRampPalette(c("white","#0072b2"))(n=100), cellnote=round(howmany*100,2), notecol="black", margins = c(15,15), key = FALSE, dendrogram = "none")
 dev.off()
+pdf(paste0(prefix, "regularUMAP_clusterColors.pdf"))
+plot(mapCoords, col = colors_info_level3, pch = 20, cex = 0.3)
+legend(max(mapCoords[,1]) - 1.5, min(mapCoords[,2]) + 3, legend = abbreviate(sort(unique(l_remove$level3)), minlength=6), pch=21, col = mycolors, pt.bg = makeTransparent(mycolors), pt.cex=2, cex=.8, bty="n", ncol = ceiling(length(unique(l_remove$level3)) / 20))
+dev.off()
+
+
 
 
 
 
 #general marker heatmaps
-level3_order = c(1,2,3,4,5,6)
+level3_order = c(1,2,3,4,5,6,7)
 sg_temp = sortGenes(logcounts(l_remove), l_remove$level3, binarizeMethod = "naive", cores = 16)
 tiff(paste0(prefix,"level3_top_auto_markers_5.tiff"), res=300, height = 25, width = 12, units = "in")
 plotTopMarkerHeat(sg_temp, averageCells=10^5, newOrder=level3_order, gaps = FALSE, colors = colorRampPalette( c("cornflowerblue","black","gold"))(n=100), top_n=5)
@@ -409,9 +435,9 @@ for (i in 1:length(markersp)) {
 
 
 #cell cycle
-G1_S = read.table("https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/public/cell_cycle/G1S")[[1]]
-G2_M = read.table("https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/public/cell_cycle/G2M")[[1]]
-G0 = read.table("https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/public/cell_cycle/G0")[[1]]
+G1_S = read.table("https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/public/cell_cycle/G1S_human")[[1]]
+G2_M = read.table("https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/public/cell_cycle/G2M_human")[[1]]
+G0 = read.table("https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/public/cell_cycle/G0_human")[[1]]
 cycle_list = list(G1_S, G2_M, G0)
 flexible_normalization <- function(data_in,by_row=TRUE){
   if(by_row){
@@ -451,9 +477,20 @@ ans_normed <- flexible_normalization(ans,by_row=FALSE)
 ans_normed_normed <- flexible_normalization(ans_normed,by_row=TRUE)
 cell_phase = apply(ans_normed_normed,1,function(x) colnames(ans_normed_normed)[which.max(x)])
 cycle_tab = t(table(cell_phase, l_remove$level3))
+a = cycle_tab
 cycle_tab = t(apply(cycle_tab, 1, function(x) x/sum(x)))
 zzz = pdf(paste0(prefix, "cell_cycle.pdf"))
 heatmap.2(cycle_tab, trace = "none", scale="none", col = colorRampPalette(c("white","dodgerblue4"))(n=100), Rowv = NA, Colv = NA, margins = c(15,15), key = FALSE, cellnote= round(cycle_tab,2)*100, notecol = "black", notecex = 2)
+dev.off()
+#permutation
+library(vegan)
+numPerm = 1000
+set.seed(111)
+pp = permatfull(as.matrix(a),fixedmar ="both", shuffle = "both", times = numPerm, burnin = 100)
+pp = Reduce('+', pp$perm) / numPerm
+fc = log2(as.matrix(a)) - log2(as.matrix(pp))
+pdf(paste0(prefix, "cell_cycle_bootstrap.pdf"))
+heatmap.2(fc, scale = "none", trace = "none", col = colorRampPalette(c("cornflowerblue","black","gold"))(n=100), margins = c(20,20), cellnote = round(fc, 2), notecol = "black", notecex = 1, density.info = "none", Colv = NA, Rowv = NA)
 dev.off()
 
 

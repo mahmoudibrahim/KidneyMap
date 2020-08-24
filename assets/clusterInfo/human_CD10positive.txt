@@ -1,6 +1,7 @@
-en12	PT6	Epithelial	Proximal Tubule	Proximal Tubule 6
-en2	PT1	Epithelial	Proximal Tubule	Proximal Tubule 1
-en4	PT3	Epithelial	Proximal Tubule	Proximal Tubule 3
-merge1	PT4a	Epithelial	Proximal Tubule	Proximal Tubule 4a
-merge2	PT4b	Epithelial	Proximal Tubule	Proximal Tubule 4b
-merge4	PT5	Epithelial	Proximal Tubule	Proximal Tubule 5
+PT1	S1/2 1	Epithelial	PT	S1/2 1
+PT2	S3 1	Epithelial	PT	S3 1
+PT3	S3 2	Epithelial	PT	S3 2
+PT4	S1	Epithelial	PT	S1
+PT6	S1/2 2	Epithelial	PT	S1/2 2
+PT7	S1/2 3	Epithelial	PT	S1/2 3	
+merge1	S3 3	Epithelial	PT	S3 3

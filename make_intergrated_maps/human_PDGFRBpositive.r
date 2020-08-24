@@ -1125,7 +1125,7 @@ plotMarkerHeat(ll, l_v$level2, c(head(ng[[1]], 11), head(ng[[2]], 10)), averageC
 dev.off()
 
 
-
+#Nkd2 GRN
 library(igraph)
 library(ggraph)
 library(tibble)
