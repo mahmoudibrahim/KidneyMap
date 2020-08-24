@@ -364,6 +364,36 @@ for (i in 1:length(allClasses)) {
 dev.off()
 
 
+#microarray comparison
+load("GSE121190_exprs.RData")
+pa = rowMeans(pdgfra_fib[,1:3]) - rowMeans(pdgfra_fib[,4:6])
+inter = intersect(names(pa), rownames(exp))
+pa_int = pa[which(names(pa) %in% inter)]
+pa_int = pa_int[order(names(pa_int))]
+exp_int = exp[which(rownames(exp) %in% inter),]
+exp_int = exp_int[order(rownames(exp_int)),]
+exp_int_fc = exp_int - rowMeans(exp_int)
+aaa = apply(exp_int_fc, 2, function(x) cor(x, pa_int, method = "pearson"))
+pdf("correlation_microarray_box_pearson.pdf")
+level2[which(level2 == "(Myo)fibroblast")] = "Myofibroblast"
+facts = factor(as.factor(level2),levels(as.factor(level2))[c(4,6,1,5,2,3)])
+plot(as.numeric(facts)+rnorm(length(aaa), 0, 0.1), aaa, pch = 19, xlab = "", ylab = "", cex = 0.8, main = "Correlation to UUO PDGFRa+ Fibroblasts", col = colors_info_level1, xaxt = "n")
+axis(1, at=sort(unique(as.numeric(facts))), labels=abbreviate(levels(facts)))
+vioplot(as.vector(aaa) ~ as.factor(facts), col = makeTransparent("white", alpha = 0), border = makeTransparent("black", alpha = 0.3), range = 0.1, outline = F, add = T, notch = T, lwd = 4,  plotCentre="line", xlab = "Cell Clusters", ylab = "Correlation to UUO PDGFRa+ Fibroblasts")
+dev.off()
+pdf("correlation_microarray_umap_pearson.pdf")
+plot(rr, col = color.gradient(scale(aaa), colors = c("#ECECEC50",rev(c("#d7191c","#abdda4")))), pch = 19, xlab = "umap-1", ylab = "umap-2", frame.plot = FALSE, ylim = c(min(rr[,2]),max(rr[,2])))
+legend.col(col = colorRampPalette(c("#ECECEC50",rev(c("#d7191c","#abdda4"))))(100), lev = seq(min(aaa), max(aaa), length.out=100))
+dev.off()
+www = which(level2 == "Myofibroblast")
+pdf("correlation_microarray_MFtime_box_pearson.pdf")
+facts = factor(kidney_mesen_metadata$Timepoint[www])
+plot(as.numeric(facts)+rnorm(length(aaa[www]), 0, 0.1), aaa[www], pch = 19, xlab = "", ylab = "", cex = 0.8, main = "Correlation to UUO PDGFRa+ Fibroblasts", col = colors_info_level1[www], xaxt = "n", xlim = c(0.5,3.5))
+axis(1, at=sort(unique(as.numeric(facts))), labels=abbreviate(levels(facts)))
+vioplot(as.vector(aaa[www]) ~ as.factor(facts), col = makeTransparent("white", alpha = 0), border = makeTransparent("black", alpha = 0.3), range = 0.1, outline = F, add = T, notch = T, lwd = 4,  plotCentre="line", xlab = "Cell Clusters", ylab = "Correlation to UUO PDGFRa+ Fibroblasts")
+dev.off()
+
+
 
 #make publication heatmaps
 level3_order = c(1,6,5,9,4,2,8,7,3,10)
@@ -582,6 +612,20 @@ for (i in 1:length(unique(class_info))) {
 pdf("time_genes_myofibroblastOnly.pdf")
 plotMarkerHeat(exp[,which(class_info == 10)], timing[which(class_info == 10)], names(time_test[[10]]), clusterGenes = T, clusterGenesK = 2, averageCells=5, colors = colorRampPalette(c("cornflowerblue","black","gold"))(n=100))
 dev.off()
+
+
+
+#save output
+
+###messages
+writeMM(as(exp, "dgCMatrix"), file = paste0(prefix, "log_expression.mtx"))
+rowdat = rownames(exp)
+names(rowdat) = c("Gene.Symbol")
+write.table(rowdat, file = paste0(prefix, "log_expression_rowData.txt"), sep = "\t", row.names=FALSE, quote = FALSE)
+
+coldat = cbind(level1, level2, level3, as.character(kidney_mesen_metadata$Timepoint), aaa)
+colnames(coldat) = c("Annotation.Level.1","Annotation.Level.2","Annotation.Level.3","Time.point","Core.Matrisome.Expression.Score")
+write.table(coldat, file = paste0(prefix, "log_expression_colData.txt"), sep = "\t", row.names=FALSE, quote = FALSE)
 
 
 
