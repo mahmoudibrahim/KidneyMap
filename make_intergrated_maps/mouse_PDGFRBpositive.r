@@ -616,8 +616,6 @@ dev.off()
 
 
 #save output
-
-###messages
 writeMM(as(exp, "dgCMatrix"), file = paste0(prefix, "log_expression.mtx"))
 rowdat = rownames(exp)
 names(rowdat) = c("Gene.Symbol")

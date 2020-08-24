@@ -386,51 +386,77 @@ zzz = dev.off()
 
 
 
-
-
-#Supervised assignment of clusters to epithelial, endothelial, immune, mesenchymal and neuronal (rather ad hoc, some manual checking is still done and some assignments are corrected)
-library(genesorteR)
+###remove singular cell clusters and remove bad clusters?
 if (any(table(class_info) == 1)) {
 	www = which(table(class_info) == 1)
 	www = which(class_info %in% www)
 	l = l[,-www]
 	class_info = class_info[-www]
-	message(paste0(length(www), " cells excluded because they formed singular clusters."))
+	rr = rr[-www,]
+	colors_info = colors_info[-www]
+	message(paste0(length(www), " cell(s) excluded because they formed singular clusters."))
 }
+
+
+pdf(paste0(filename, "_beforeFiltering_totalCounts.pdf"))
+boxplot(l$log10_total_counts ~ class_info)
+dev.off()
+sg = sortGenes(counts(l), class_info, binarizeMethod = "naive")
+write.files(sg, prefix = paste0(filename,"_beforeFiltering_gs"))
+marks = unique(unlist(plotTopMarkerHeat(sg, top_n=500, outs = TRUE, plotheat=FALSE)))
+
+##if there are low quality clusters, based on a combination of no diff exp genes, marker genes are all ribo-proteins or house keeping genes, very low RNA content. Example:
+www = which(class_info %in% c("8","15")) #remove clusters
+l = l[,-www]
+class_info = class_info[-www]
+rr = rr[-www,]
+colors_info = colors_info[-www]
+##########################################
+
+
+
+
+
+
+#Supervised assignment of clusters to epithelial, endothelial, immune, mesenchymal and neuronal (rather ad hoc, some manual checking is still done and some assignments are corrected)
 gene_symbols = toupper(unlist(lapply(strsplit(as.character(rownames(l)), split = ";", fixed = T), function(x) as.character(x[2]))))
-
-
 ll = l
 rownames(ll) = gene_symbols
 sg = sortGenes(logcounts(ll), class_info, binarizeMethod = "naive")
-write.files(sg, prefix = paste0(filename,"_genesorteR"))
+write.files(sg, prefix = paste0(filename,"_afterFiltering_gs"))
 zzz = pdf(paste0(filename, "_clusterSimilarity.pdf"))
 plotCorrelationHeat(sg, getMarkers(sg, quant=0.95)$markers)
 dev.off()
 toplist = plotTopMarkerHeat(sg, top_n = 50, plotheat=FALSE, outs=TRUE)
-markerFile = "https://raw.githubusercontent.com/mahmoudibrahim/KidneyMap/master/assets/public/all_markers_MMI_Aug2019.txt"
+markerFile = "/home/mibrahim/Dropbox/dev/kidneyMap/public/assets/public/all_markers_MMI_Aug2019_Mar2020.txt"
+
 ct = read.table(markerFile, sep = "\t", header = T)
-cell_types = names(table(ct$General.Cell.Type))
+ct = ct[which(ct$Source != "Clark2019"),]
+cell_types = names(table(ct$Cell_Type2))
 cell_types = cell_types[c(-1,-5)]
 inter_mat = matrix(0, ncol = ncol(sg$specScore), nrow = length(cell_types))
 for (i in 1:length(cell_types)) {
 	for (j in 1:ncol(sg$specScore)) {
-		pm1 = unique(toupper(ct$Gene[which(ct$General.Cell.Type == cell_types[i])]))
+		pm1 = unique(toupper(ct$Gene[which(ct$Cell_Type2 == cell_types[i])]))
 		pm2 = toplist[[j]]
 		inter_mat[i,j] = length(intersect(pm1, pm2))
 	}
 }
+
 rownames(inter_mat) = c(cell_types)
-norma = table(as.character(ct$General.Cell.Type[which(ct$General.Cell.Type %in% cell_types)])) / rowSums(inter_mat)
+norma = table(as.character(ct$Cell_Type2[which(ct$Cell_Type2 %in% cell_types)])) / rowSums(inter_mat)
 enri = apply(inter_mat,2,function(x)x/norma)
 enri = apply(enri, 2, function(x) x/sum(x))
 enri = t(scale(t(enri)))
 rownames(enri) = rownames(inter_mat)
+colnames(enri) = names(sg$classProb)
 enri = enri * 100
 enri[which(is.nan(enri))] = 0
-zzz = pdf(paste0(filename, "_cellTypeAssignment.pdf"), height = 15)
+
+zzz = pdf(paste0(filename, "_japanium_cellTypeAssignment.pdf"), height = 15)
 heatmap.2(t(enri), trace = "none", scale = "none", col = colorRampPalette(c("blue","white","red"))(n=100), margins = c(16,4), notecol="black", notecex=1, density.info = "none", cellnote=round(t(enri),1))
 dev.off()
+
 
 
 whichCat = rownames(enri)[apply(enri,2,which.max)]
@@ -462,6 +488,17 @@ for (i in 1:length(hend_markers)) {
 	}
 }
 
+
+
+
+
+###doublet score
+set.seed(111)
+dbs = log10(doubletCells(l, subset.row = which(rownames(l) %in% marks), d = length(dw)) + 1)
+zzz = pdf(paste0(filename, "_doubletScore_.pdf"))
+boxplot(dbs ~ class_info, col = makeTransparent("white", alpha = 0), border = makeTransparent("black", alpha = 0.5), range = 0, outline = F, add = F, notch = T, lwd = 3)
+dev.off()
+#############################################
 
 
 
