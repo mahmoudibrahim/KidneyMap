@@ -1,55 +1,50 @@
-en8	AEC	Endothelial	Arterioles	Arterioles
-merge1	B	Immune	B Cells	B Cells
-hem2	Baso	Immune	Basophils	Basophils
-ep11	PC	Epithelial	Collecting Duct Principal Cells	Collecting Duct Principal Cells
+en5	Art1	Endothelial	Arterioral Endothelium	Arteriolar Endothelium
+en8	Art2	Endothelial	Venular Endothelium	Venular Endothelium
+hem1	B	Immune	B Cells	B Cells
+hem11	Mast	Immune	Basophils	Mast Cells
+ep10	CD	Epithelial	Collecting Duct Principal Cells	Collecting Duct Principal Cells
 ep3	CT	Epithelial	Connecting Tubule	Connecting Tubule
-hem6	DC	Immune	Dendritic Cells	Dendritic Cells
-ep6	DTL	Epithelial	Descending Thin Limb	Descending Thin Limb
-ep1	DCT	Epithelial	Distal Convoluted Tubule	Distal Convoluted Tubule
-smc12	Fi1	Mesenchymal	Fibroblast	Fibroblast 1
-smc14	Fi2	Mesenchymal	Fibroblast	Fibroblast 2
-smc4	Fi3	Mesenchymal	Fibroblast	Fibroblast 3
-smc3	Fi4	Mesenchymal	Fibroblast	Fibroblast 4
-smc11	Fi5	Mesenchymal	Fibroblast	Fibroblast 5
-en5	GE1	Endothelial	Glomerular Capillaries	Glomerular Capillaries 1
-en6	GE2	Endothelial	Glomerular Capillaries	Glomerular Capillaries 2
-hem14	Iu1	Immune	Immune (Unassigned)	Immune (Unassigned) 1
-hem3	Iu2	Immune	Immune (Unassigned)	Immune (Unassigned) 2
-hem8	Iu3	Immune	Immune (Unassigned)	Immune (Unassigned) 3
-ep5	iPT1	Epithelial	Injured Proximal Tubule	Injured Proximal Tubule 1
-ep15	iPT2	Epithelial	Injured Proximal Tubule	Injured Proximal Tubule 2
-ep4	iPT3	Epithelial	Injured Proximal Tubule	Injured Proximal Tubule 3
-ep2	IC	Epithelial	Intercalated Cells	Intercalated Cells
-en2	LEC	Endothelial	Lymph Endothelium	Lymph Endothelium
-smc15	Mesa	Mesenchymal	Mesangial Cells	Mesangial Cells
-hem1	MC1	Immune	Monocytes	Monocytes 1
-hem7	MC2	Immune	Monocytes	Monocytes 2
-smc8	MF1	Mesenchymal	Myofibroblast	Myofibroblast 1
-smc10	MF2	Mesenchymal	Myofibroblast	Myofibroblast 2
-smc13	MF3	Mesenchymal	Myofibroblast	Myofibroblast 3
-smc9	Fi6	Mesenchymal	Fibroblast	Fibroblast 6
-hem4	NKC	Immune	Natural Killer Cells	Natural Killer Cells
-hem9	Neut	Immune	Neutrophils	Neutrophils
-smc1	Pe1	Mesenchymal	Pericytes	Pericytes 1
-smc6	Pe2	Mesenchymal	Pericytes	Pericytes 2
-en9	iPC	Endothelial	Peritubular Capillaries	Peritubular Capillaries
-smc5	Pod	Epithelial	Podocytes	Podocytes
-ep12	PT1	Epithelial	Proximal Tubule	Proximal Tubule 1
-ep14	PT2	Epithelial	Proximal Tubule	Proximal Tubule 2
-ep13	PT4	Epithelial	Proximal Tubule	Proximal Tubule 4
-smc16	PT3	Epithelial	Proximal Tubule	Proximal Tubule 3
-neu4	SW	Neuronal	Schwann Cells	Schwann Cells
+ep5	DCT	Epithelial	Distal Convoluted Tubule	Distal Convoluted Tubule
+hem4	Den	Immune	Dendritic Cells	Dendritic Cells
+ep4	DTL	Epithelial	Descending Thin Limb	Descending Thin Limb
+merge1	Fib2	Mesenchymal	Fibroblast	Fibroblast 2
+smc6	Fib4	Mesenchymal	Fibroblast	Fibroblast 4
+smc1	Fib6	Mesenchymal	Fibroblast	Fibroblast 6
+en4	GC	Endothelial	Glomerular Capillaries	Glomerular Capillaries
+ep9	IC1	Epithelial	Intercalated Cells	Intercalated Cells B
+ep1	IC2	Epithelial	Intercalated Cells	Intercalated Cells A
+neu1	IC3	Epithelial	Intercalated Cells	Intercalated Cells 3
+neu2	IC4	Epithelial	Intercalated Cells	Intercalated Cells 4
+neu3	IC5	Epithelial	Intercalated Cells	Intercalated Cells 5
+neu4	IC6	Epithelial	Intercalated Cells	Intercalated Cells 6
+neu5	IC7	Epithelial	Intercalated Cells	Intercalated Cells 7
+neu6	IC8	Epithelial	Intercalated Cells	Intercalated Cells 8
+ep8	iPT	Epithelial	Injured Tubule	Injured Proximal tubule
+ep11	URE	Epithelial	Uroethlial Cells	Uroethlial Cells
+hem3	MC1	Immune	Macrophages	Macrophages 1
+en11	lEn	Endothelial	Lymph Endothelium	Lymph Endothelium
+smc4	MF1a	Mesenchymal	Myofibroblast	Myofibroblast 1a
+smc7	MF1b	Mesenchymal	Myofibroblast	Myofibroblast 1b
+hem10	Mono	Immune	Monocytes	Monocytes
+hem2	MC2	Immune	Macrophages	Macrophages 2
+hem6	MC3	Immune	Macrophages	Macrophages 3
+hem7	NK	Immune	Natural Killer Cells	Natural Killer Cells
+hem8	P	Immune	Plasma Cells	Plasma Cells
+smc12	Pe1	Mesenchymal	Pericytes	Pericytes 1
+smc9	Pe2	Mesenchymal	Pericytes	Pericytes 2
+smc2	Podo	Epithelial	Podocytes	Podocytes
+ep13	pTub	Epithelial	Proximal Tubule	Proximal Tubule
+smc5	Sch	Neuronal	Schwann Cells	Schwann Cells
+ep7	TAL1	Epithelial	Thick Ascending Limb	Macula Densa Cells
 hem5	T	Immune	T Cells	T Cells
-ep7	TAL1	Epithelial	Thick Ascending Limb	Thick Ascending Limb 1
-ep9	TAL2	Epithelial	Thick Ascending Limb	Thick Ascending Limb 2
-ep8	TAL3	Epithelial	Thick Ascending Limb	Thick Ascending Limb 3
-en10	VR1	Endothelial	Vasa Recta	Vasa Recta 1
-en1	VR2	Endothelial	Vasa Recta	Vasa Recta 2
-en11	VR3	Endothelial	Vasa Recta	Vasa Recta 3
-en12	VR4	Endothelial	Vasa Recta	Vasa Recta 4
-en13	VR5	Endothelial	Vasa Recta	Vasa Recta 5
-en3	VR6	Endothelial	Vasa Recta	Vasa Recta 6
-en4	VR7	Endothelial	Vasa Recta	Vasa Recta 7
-smc2	vSMC1	Mesenchymal	Vascular Smooth Muscle Cells	Vascular Smooth Muscle Cells 1
-smc7	vSMC2	Mesenchymal	Vascular Smooth Muscle Cells	Vascular Smooth Muscle Cells 2
-en14	VEC	Endothelial	Venular Endothelium	Venular Endothelium
+ep12	TAL2	Epithelial	Thick Ascending Limb	Thick Ascending Limb 2
+ep2	TAL3	Epithelial	Thick Ascending Limb	Thick Ascending Limb 3
+ep6	TAL4	Epithelial	Thick Ascending Limb	Thick Ascending Limb 4
+en6	iEn	Endothelial	Injured Endothelium	Injured Endothelial Cells
+en9	VR1	Endothelial	Vasa Recta	Vasa Recta 1
+en7	VR2	Endothelial	Vasa Recta	Vasa Recta 2
+en3	VR3	Endothelial	Vasa Recta	Vasa Recta 3
+en2	VR4	Endothelial	Vasa Recta	Vasa Recta 4
+en10	VR5	Endothelial	Vasa Recta	Vasa Recta 5
+en1	VR6	Endothelial	Vasa Recta	Vasa Recta 6
+smc10	vSMC	Mesenchymal	Smooth Muscle Cells	Vascular Smooth Muscle Cells
