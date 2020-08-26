@@ -6,12 +6,12 @@ ORCID: 0000-0003-0780-6683
 
 Transcriptome profiling with conventional RNAseq was performed in three
 replicates of myofibroblasts carrying different gene perturbationss on
-NKD2 (Knock-out, over-expression and corresponding controls with empty
-vector). These belong to two different experiments: knock-out (KO) and
-over-dispersion (OE). Thus, these are loaded at once, but explored and
-analyzed independently. In the case of KO experiment, there were
-generated 3 NKD2-KO clones, one of them (`nC3`) with a phenotype with a
-severe collagen production. Herein we perform an exploratory analysis.
+NKD2 (Knock-out, over-expression and corresponding controls). These
+belong to two different experiments: knock-out (KO) and over-dispersion
+(OE). Thus, these are loaded at once, but explored and analyzed
+independently. In the case of KO experiment, there were generated 3
+NKD2-KO clones, one of them (`nC3`) with a phenotype with a severe
+collagen production. Herein we perform an exploratory analysis.
 
 ## Setting-up environment
 
@@ -162,55 +162,7 @@ barplot(c(KO_y$samples$lib.size, OE_y$samples$lib.size),
 
 ![](./00_EDA_output//figures/unnamed-chunk-7-1.png)<!-- -->
 
-### NKD2 expression
-
-``` r
-# Source: https://bioconductor.org/packages/release/bioc/vignettes/tximport/inst/doc/tximport.html#edgeR
-cts <- txi$counts
-normMat <- txi$length
-
-# Obtaining per-observation scaling factors for length, adjusted to avoid
-# changing the magnitude of the counts.
-normMat <- normMat/exp(rowMeans(log(normMat)))
-normCts <- cts/normMat
-
-# Computing effective library sizes from scaled counts, to account for
-# composition biases between samples.
-eff.lib <- calcNormFactors(normCts) * colSums(normCts)
-
-# Combining effective library sizes with the length factors, and calculating
-# offsets for a log-link GLM.
-normMat <- sweep(normMat, 2, eff.lib, "*")
-normMat <- log(normMat)
-
-# Creating a DGEList object for use in edgeR.
-y <- DGEList(cts)
-y <- scaleOffset(y, normMat)
-
-se <- SummarizedExperiment(assays = list(counts = y$counts, offset = y$offset))
-se$totals <- y$samples$lib.size
-cpms <- calculateCPM(se, use.offsets = TRUE, log = FALSE)
-#
-
-dat <- data.frame("NKD2"=cpms[grep("NKD2", rownames(cpms)),],
-          "Group"=group_str)
-dat$Group <- factor(dat$Group, levels=c("KO_ctrl", "KO_1", "KO_2", "KO_3",
-                    "OE_ctrl", "OE")
-)
-
-ggplot(dat, aes(y=NKD2, x=Group, colour=Group)) + 
-    geom_point(position=position_jitter(w=0.2, seed = 2354), size=2) +
-    ggtitle("NKD2 quantification") +
-    xlab("Condition") + ylab("NKD2 expression (CPM)") +
-    theme_cowplot()
-```
-
-![](./00_EDA_output//figures/NKD2_expr-1.png)<!-- -->
-
-> Conclusion: Libraries sizes are well balanced. Surprisingly, NKD2
-> transcripts have not been sequenced in control conditions. Maybe the
-> cell line presents a baseline protein levels of NKD2 to be funcional
-> as it is shown in the western blot of these samples.
+> Conclusion: Libraries sizes are well balanced.
 
 ### Principal Component analysis
 
@@ -256,7 +208,7 @@ legend("topright",legend = levels(KO_gr), pch=c(21),
        inset = c(-0.4,0), title = "Perturbation")
 ```
 
-![](./00_EDA_output//figures/pca_KO-1.png)<!-- -->
+![](./00_EDA_output//figures/extended_data_Fig10k_KO-1.png)<!-- -->
 
 ``` r
 par(mar=c(4,4,4,12), xpd=TRUE)
@@ -269,13 +221,14 @@ legend("topright",legend = levels(OE_gr), pch=c(21),
        inset = c(-0.4,0), title = "Perturbation")
 ```
 
-![](./00_EDA_output//figures/pca_OE-1.png)<!-- -->
+![](./00_EDA_output//figures/extended_data_Fig10k_OE-1.png)<!-- -->
 
-We conclude that biological replicates and conditions are cluster as it
-would be expected given the experimental settings. The NKD2-KO clone
-with more severe phenotype (`nC3`) is much more distinct to the other
-phenotypes. And KO and OE experiments cluster with their corresponding
-replicates.
+> We conclude that biological replicates and conditions are cluster as
+> it would be expected given the experimental settings. The NKD2-KO
+> clone with more severe phenotype (`nC3`) is much more distinct to the
+> other phenotypes. Two KO clones were very simillar, we termed them
+> KO-shallow and considered them a single group. KO and OE experiments
+> cluster with their corresponding replicates.
 
 ## Session info
 
@@ -299,8 +252,8 @@ sessionInfo()
     ## [11] LC_MEASUREMENT=en_GB.UTF-8 LC_IDENTIFICATION=C       
     ## 
     ## attached base packages:
-    ##  [1] grid      stats4    parallel  stats     graphics  grDevices utils    
-    ##  [8] datasets  methods   base     
+    ## [1] stats4    parallel  stats     graphics  grDevices utils     datasets 
+    ## [8] methods   base     
     ## 
     ## other attached packages:
     ##  [1] csaw_1.22.0                 SummarizedExperiment_1.18.1
@@ -316,29 +269,29 @@ sessionInfo()
     ## [21] rmarkdown_2.1               nvimcom_0.9-82             
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] bitops_1.0-6             bit64_0.9-7              progress_1.2.2          
-    ##  [4] httr_1.4.1               tools_4.0.0              R6_2.4.1                
-    ##  [7] DBI_1.1.0                colorspace_1.4-1         withr_2.2.0             
-    ## [10] tidyselect_1.1.0         gridExtra_2.3            prettyunits_1.1.1       
-    ## [13] bit_1.1-15.2             curl_4.3                 compiler_4.0.0          
-    ## [16] rtracklayer_1.48.0       labeling_0.3             scales_1.1.1            
-    ## [19] askpass_1.1              rappdirs_0.3.1           stringr_1.4.0           
-    ## [22] digest_0.6.25            Rsamtools_2.4.0          XVector_0.28.0          
-    ## [25] pkgconfig_2.0.3          htmltools_0.4.0          dbplyr_1.4.3            
-    ## [28] rlang_0.4.6              RSQLite_2.2.0            generics_0.0.2          
-    ## [31] farver_2.0.3             BiocParallel_1.22.0      dplyr_1.0.0             
-    ## [34] RCurl_1.98-1.2           magrittr_1.5             GenomeInfoDbData_1.2.3  
-    ## [37] Matrix_1.2-18            Rcpp_1.0.4.6             munsell_0.5.0           
-    ## [40] lifecycle_0.2.0          stringi_1.4.6            yaml_2.2.1              
-    ## [43] zlibbioc_1.34.0          BiocFileCache_1.12.0     blob_1.2.1              
-    ## [46] crayon_1.3.4             lattice_0.20-41          Biostrings_2.56.0       
-    ## [49] GenomicFeatures_1.40.0   hms_0.5.3                locfit_1.5-9.4          
-    ## [52] knitr_1.28               pillar_1.4.4             biomaRt_2.44.0          
-    ## [55] fastmatch_1.1-0          glue_1.4.1               evaluate_0.14           
-    ## [58] data.table_1.12.8        vctrs_0.3.0              gtable_0.3.0            
-    ## [61] openssl_1.4.1            purrr_0.3.4              assertthat_0.2.1        
-    ## [64] xfun_0.14                xtable_1.8-4             tibble_3.0.1            
-    ## [67] GenomicAlignments_1.24.0 memoise_1.1.0            ellipsis_0.3.1
+    ##  [1] httr_1.4.1               bit64_0.9-7              assertthat_0.2.1        
+    ##  [4] askpass_1.1              BiocFileCache_1.12.0     blob_1.2.1              
+    ##  [7] Rsamtools_2.4.0          GenomeInfoDbData_1.2.3   yaml_2.2.1              
+    ## [10] progress_1.2.2           pillar_1.4.4             RSQLite_2.2.0           
+    ## [13] lattice_0.20-41          glue_1.4.1               digest_0.6.25           
+    ## [16] XVector_0.28.0           colorspace_1.4-1         htmltools_0.4.0         
+    ## [19] Matrix_1.2-18            pkgconfig_2.0.3          biomaRt_2.44.0          
+    ## [22] zlibbioc_1.34.0          purrr_0.3.4              xtable_1.8-4            
+    ## [25] scales_1.1.1             BiocParallel_1.22.0      openssl_1.4.1           
+    ## [28] tibble_3.0.1             generics_0.0.2           ellipsis_0.3.1          
+    ## [31] withr_2.2.0              GenomicFeatures_1.40.0   magrittr_1.5            
+    ## [34] crayon_1.3.4             memoise_1.1.0            evaluate_0.14           
+    ## [37] prettyunits_1.1.1        tools_4.0.0              data.table_1.12.8       
+    ## [40] hms_0.5.3                lifecycle_0.2.0          stringr_1.4.0           
+    ## [43] munsell_0.5.0            locfit_1.5-9.4           Biostrings_2.56.0       
+    ## [46] compiler_4.0.0           rlang_0.4.6              grid_4.0.0              
+    ## [49] RCurl_1.98-1.2           rappdirs_0.3.1           bitops_1.0-6            
+    ## [52] gtable_0.3.0             curl_4.3                 DBI_1.1.0               
+    ## [55] R6_2.4.1                 GenomicAlignments_1.24.0 gridExtra_2.3           
+    ## [58] rtracklayer_1.48.0       knitr_1.28               dplyr_1.0.0             
+    ## [61] bit_1.1-15.2             fastmatch_1.1-0          stringi_1.4.6           
+    ## [64] Rcpp_1.0.4.6             vctrs_0.3.0              dbplyr_1.4.3            
+    ## [67] tidyselect_1.1.0         xfun_0.14
 
 ``` r
 {                                                                                                                                                                                                           

@@ -5,8 +5,8 @@ output: github_document
 ---
 
 Transcriptome profiling with conventional RNAseq was performed in three replicates of myofibroblasts 
-carrying different gene perturbationss on NKD2 (Knock-out, over-expression and corresponding controls with 
-empty vector). These belong to two different experiments: knock-out (KO) and over-dispersion (OE). Thus, these 
+carrying different gene perturbationss on NKD2 (Knock-out, over-expression and corresponding controls). 
+These belong to two different experiments: knock-out (KO) and over-dispersion (OE). Thus, these 
 are loaded at once, but explored and analyzed independently. In the case of KO experiment, there were generated 
 3 NKD2-KO clones, one of them (`nC3`) with a phenotype with a severe collagen production.
 Herein we perform an exploratory analysis. 
@@ -43,7 +43,7 @@ cols <- c("grey","#cb6a49", "#a46cb7","#7aa457")
 
 ### Load libraries
 Essential libraries for R analysis.
-```{r}
+```{r, warning=FALSE}
 library(edgeR)
 library(limma)
 library(fgsea)
@@ -136,54 +136,7 @@ barplot(c(KO_y$samples$lib.size, OE_y$samples$lib.size),
 	las=2)
 ```
 
-### NKD2 expression
-
-```{r NKD2_expr, fig.width=6, fig.height=4, dpi=300}
-# Source: https://bioconductor.org/packages/release/bioc/vignettes/tximport/inst/doc/tximport.html#edgeR
-cts <- txi$counts
-normMat <- txi$length
-
-# Obtaining per-observation scaling factors for length, adjusted to avoid
-# changing the magnitude of the counts.
-normMat <- normMat/exp(rowMeans(log(normMat)))
-normCts <- cts/normMat
-
-# Computing effective library sizes from scaled counts, to account for
-# composition biases between samples.
-eff.lib <- calcNormFactors(normCts) * colSums(normCts)
-
-# Combining effective library sizes with the length factors, and calculating
-# offsets for a log-link GLM.
-normMat <- sweep(normMat, 2, eff.lib, "*")
-normMat <- log(normMat)
-
-# Creating a DGEList object for use in edgeR.
-y <- DGEList(cts)
-y <- scaleOffset(y, normMat)
-
-se <- SummarizedExperiment(assays = list(counts = y$counts, offset = y$offset))
-se$totals <- y$samples$lib.size
-cpms <- calculateCPM(se, use.offsets = TRUE, log = FALSE)
-#
-
-dat <- data.frame("NKD2"=cpms[grep("NKD2", rownames(cpms)),],
-		  "Group"=group_str)
-dat$Group <- factor(dat$Group, levels=c("KO_ctrl", "KO_1", "KO_2", "KO_3",
-					"OE_ctrl", "OE")
-)
-
-ggplot(dat, aes(y=NKD2, x=Group, colour=Group)) + 
-	geom_point(position=position_jitter(w=0.2, seed = 2354), size=2) +
-	ggtitle("NKD2 quantification") +
-	xlab("Condition") + ylab("NKD2 expression (CPM)") +
-	theme_cowplot()
-```
-
-
-> Conclusion: Libraries sizes are well balanced. Surprisingly, NKD2 transcripts have 
-not been sequenced in control conditions. Maybe the cell line presents a baseline 
-protein levels of NKD2 to be funcional as it is shown in the western blot of these
-samples.
+> Conclusion: Libraries sizes are well balanced.
 
 ### Principal Component analysis
 First we start with the definition of ad-hoc handle functions to quick generate PCA plots 
@@ -215,7 +168,7 @@ plotPCA <- function(pca, dims, pchs, cols, labels=NULL, family="sans") {
 ```
 
 ### Knock-out experiment
-```{r pca_KO, fig.width=7, fig.height=5, dpi=300}
+```{r extended_data_Fig10k_KO, fig.width=7, fig.height=5, dpi=300}
 par(mar=c(4,4,4,12), xpd=TRUE)
 # KO
 plotPCA(pca=runPCA(mat = KO_v$E),
@@ -226,7 +179,7 @@ legend("topright",legend = levels(KO_gr), pch=c(21),
        inset = c(-0.4,0), title = "Perturbation")
 ```
 
-```{r pca_OE, fig.width=7, fig.height=5, dpi=300}
+```{r extended_data_Fig10k_OE, fig.width=7, fig.height=5, dpi=300}
 par(mar=c(4,4,4,12), xpd=TRUE)
 # OE
 plotPCA(pca=runPCA(mat = OE_v$E),
@@ -237,9 +190,10 @@ legend("topright",legend = levels(OE_gr), pch=c(21),
        inset = c(-0.4,0), title = "Perturbation")
 ```
 
-We conclude that biological replicates and conditions are cluster as it would be expected given 
+> We conclude that biological replicates and conditions are cluster as it would be expected given 
 the experimental settings. The NKD2-KO clone with more severe phenotype (`nC3`) is much more 
-distinct to the other phenotypes. And KO and OE experiments cluster with their corresponding 
+distinct to the other phenotypes. Two KO clones were very simillar, we termed them KO-shallow and 
+considered them a single group. KO and OE experiments cluster with their corresponding 
 replicates.
 
 
