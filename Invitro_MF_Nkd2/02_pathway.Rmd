@@ -35,10 +35,10 @@ Essential R libraries.
 ```{r}
 library(limma)
 library(progeny)
-library(ComplexHeatmap)
 library(broom)
 library(magrittr)
 library(ggplot2)
+suppressPackageStartupMessages(library(ComplexHeatmap))
 ```
 
 ## Load data
@@ -147,11 +147,13 @@ set.seed(1234)
 progeny.res <- progenyPerm(df, progeny.mat)
 pvals <- apply(progeny.res, 2, function(z) pnorm(z))
 pvals <- apply(pvals, c(1,2), function(pval) ifelse(pval > 0.5, (1-pval)*2, pval*2))
+fdr <- matrix(p.adjust(as.vector(pvals), method="fdr"), ncol=ncol(pvals), nrow=nrow(pvals),
+	      byrow = FALSE, dimnames=dimnames(pvals))
 
 prog <- setNames(vector("list", nrow(progeny.res)), rownames(progeny.res))
 for(tag in rownames(progeny.res)) {
     # Make a simple table with the outcome
-    progeny.cont <- cbind(Activity=progeny.res[tag,],Pvalue=pvals[tag,])
+    progeny.cont <- cbind(Activity=progeny.res[tag,],Pvalue=pvals[tag,], FDR=fdr[tag,])
     # Show in stdout
     cat(paste("Pathway activity from",tag,"\n"), file=stdout())
     print(progeny.cont)
@@ -164,17 +166,17 @@ for(tag in rownames(progeny.res)) {
 ```
 
 ```{r make_hp}
-### Make a heatmap of the GSEA results for the 3 contrasts
+### Make a heatmap of the results for the 3 contrasts
 # ACT is a matrix of Activity
 # PADJ is a matrix of strings for each cell
-makeHP <- function(ACT, TXT) {
+makeHP <- function(ACT, TXT, cluster_col=FALSE) {
 
 col_fun <- circlize::colorRamp2(c(-3,0,3), c("blue","white","red"))
 legend_labs <- c(floor(min(as.vector(ACT))),
 		 -2,0,2,
 		 ceiling(max(as.vector(ACT))))
 hp <- Heatmap(ACT, column_names_side="top", row_names_side="left",
-	      col=col_fun,
+	      col=col_fun, cluster_columns=cluster_col,
 	      name="Activity (z-score)",
 
 	      heatmap_legend_param=list(direction="horizontal",
@@ -224,9 +226,13 @@ return(padj_txt)
 }
 ```
 
-```{r hp_progeny, fig.width=5, fig.height=5, dpi=300}
+```{r Fig5k, fig.width=5, fig.height=5, dpi=300}
 ACT <- t(progeny.res)
-PVAL <- t(pvals)
+ACT <- ACT[, rev(colnames(ACT))]
+PVAL <- t(fdr)
+PVAL <- PVAL[, rev(colnames(PVAL))]
+stopifnot(all(colnames(ACT)==colnames(PVAL)))
+
 TXT <- pval2txt(PVAL)
 
 hp <- makeHP(ACT, TXT)
@@ -235,7 +241,8 @@ draw(hp, heatmap_legend_side="bottom")
 
 ## Conclusions
 > The results obtained by both approaches will be quite similar: JAK-STAT pathway is highly dysregulated towards
-NKD2 functional impact. TGFb follows this trend, but not that robust as JAK-STAT.
+NKD2 functional impact in a positive direction. TGFb follows this trend with a strong association too, but lower 
+magnitude of dysregulation.
 
 ## Save data
 ```{r}

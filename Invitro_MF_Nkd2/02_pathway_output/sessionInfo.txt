@@ -18,8 +18,8 @@ attached base packages:
 [8] base     
 
 other attached packages:
-[1] ggplot2_3.3.0        magrittr_1.5         broom_0.5.6         
-[4] ComplexHeatmap_2.4.2 progeny_1.10.0       limma_3.44.1        
+[1] ComplexHeatmap_2.4.2 ggplot2_3.3.0        magrittr_1.5        
+[4] broom_0.5.6          progeny_1.10.0       limma_3.44.1        
 [7] rmarkdown_2.1        nvimcom_0.9-82      
 
 loaded via a namespace (and not attached):
