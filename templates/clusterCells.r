@@ -82,7 +82,7 @@ for (i in 1:length(filenames)) {
 }
 
 
-#filter for desired cell type
+###filter for desired cell type
 for (i in 1:length(filenames)) {
 	cellCat = as.character(read.table(paste0(strsplit(as.character(filenames[i]), split = "-japanium", fixed = T)[[1]][1], "_cellCats.txt"))[[1]])
 	ww = which(cellCat == cellType)
@@ -97,6 +97,11 @@ for (i in 1:length(filenames)) {
 	cellCluster[[i]] = as.character(read.table(paste0(strsplit(as.character(filenames[i]), split = "-japanium", fixed = T)[[1]][1], "_cellClasses.txt"))[[1]])
 	cellCluster[[i]] = cellCluster[[i]][ww]
 	cellCluster[[i]] = paste0("File", i, "-", cellCluster[[i]])
+	
+	dbs[[i]] = as.character(read.table(paste0(strsplit(as.character(filenames[i]), split = "-japanium", fixed = T)[[1]][1], "_doubletScore.txt"))[[1]])
+	dbs[[i]] = dbs[[i]][ww]
+	dbs_dec[[i]] = as.character(read.table(paste0(strsplit(as.character(filenames[i]), split = "-japanium", fixed = T)[[1]][1], "_doubletScore_decision.txt"))[[1]])
+	dbs_dec[[i]] = dbs_dec[[i]][ww]
 }
 
 
@@ -105,9 +110,15 @@ l = mat[[1]]
 for (i in 2:length(filenames)) {
 	l = cbind(l, mat[[i]])
 }
-l$colData = data.frame(fileID = unlist(file_id), origCellCluster = unlist(cellCluster)) #this doesn't really define colData() object as SingleCellExperiment understand
+l$colData = data.frame(fileID = unlist(file_id), origCellCluster = unlist(cellCluster), doubletScore = as.numeric(unlist(dbs)), doubletDecision = unlist(dbs_dec))
+colnames(l) = unlist(lapply(strsplit(as.character(paste0(colnames(l), "-", l$colData$fileID)), split = "_", fixed = T), function(x) as.character(x[1])))
 l = calculateQCMetrics(l)
-lx = l #save the full matrix for later
+
+lx = l
+#############################
+
+
+
 
 
 
@@ -198,7 +209,6 @@ a = plotExprsFreqVsMean(l)
 
 #(supervised) gene selection, markers of clusters from the process_scRNA.r clustering
 sg = sortGenes(logcounts(l), l$colData$origCellCluster, binarizeMethod = "naive", cores = 16)
-sg_files = sortGenes(logcounts(l), l$colData$fileID, binarizeMethod = "naive", cores = 16)
 var_genes = unique(unlist(plotTopMarkerHeat(sg, top_n = 500, outs = T, plotheat=F))) #the top 500 genes from each cluster (there will many overlaps as clusters will be shared between libraries)
 
 
@@ -263,7 +273,7 @@ for (i in 1:length(hend_markers)) {
 
 
 ###OPTIONAL
-#need to remove doublets (based on expression of major genes above) and clusters with no differential expression based on gene sorter (optional if these things exist). Example: from CD10- mesenchymal cell integration
+#need to remove doublets (based on expression of major genes above) and clusters with no differential expression based on gene sorter (optional if these things exist). Example:
 wsd = which(class_info %in% c(2,7)) #cluster 2 is low quality cells (no diff. exp genes), cluster 7 is potential endothel./smc (mesenchymal doublet based on pecam1 and mesenchymal genes expression)
 l = l[,-wsd]
 class_info = class_info[-wsd]

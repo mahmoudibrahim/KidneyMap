@@ -1,26 +1,26 @@
-en3	AEC	Endothelial	Arterioles	Arterioles
-en2	EnU	Endothelial	Endothelial (Unassigned)	Endothelial (Unassigned)
-en8	GE2	Endothelial	Glomerular Capillaries	Glomerular Capillaries 2
-en1	VR3	Endothelial	Vasa Recta	Vasa Recta 3/4
-en9	VR4	Endothelial	Vasa Recta	Vasa Recta 4/3
-en4	VEC	Endothelial	Venular Endothelium	Venular Endothelium
-ep1	iTU	Epithelial	Injured Tubular Epithelial	Injured Tubular Epithelial
-ep2	PEC	Epithelial	Parietal Epithelial Cells	Parietal Epithelial Cells
-hem7	DC	Immune	Dendritic Cells	Dendritic Cells
-smc2	Fi2	Mesenchymal	Fibroblasts	Fibroblast 2b
-smc6	Fi3	Mesenchymal	Fibroblasts	Fibroblast 3
-ep4	Fi6	Mesenchymal	Fibroblasts	Fibroblast 6a
-ep5	Fi6	Mesenchymal	Fibroblasts	Fibroblast 6b
-ep6	Fi6	Mesenchymal	Fibroblasts	Fibroblast 6c
-ep7	Fi6	Mesenchymal	Fibroblasts	Fibroblast 6d
-ep8	Fi6	Mesenchymal	Fibroblasts	Fibroblast 6e
-smc5	Fi7	Mesenchymal	Fibroblasts	Fibroblast 7
-smc1	Mesa1	Mesenchymal	Mesangial Cells	Mesangial Cells 1
-en6	Mesa2	Mesenchymal	Mesangial Cells	Mesangial Cells 2
-en7	Mesa3	Mesenchymal	Mesangial Cells	Mesangial Cells 3
-en5	Mesa4	Mesenchymal	Mesangial Cells	Mesangial Cells 4
-smc4	MF1	Mesenchymal	Myofibroblasts	Myofibroblasts 1
-smc7	MF2	Mesenchymal	Myofibroblasts	Myofibroblasts 2
-smc8	Fi2	Mesenchymal	Fibroblasts	Fibroblast 2a
-smc3	Pe2	Mesenchymal	Pericytes	Pericytes 2
-smc9	vSMC2	Mesenchymal	Vascular Smooth Muscle Cells	Vascular Smooth Muscle Cells 2
+en1	GE1	Endothelial	Glomerular Capillaries	Glomerular Capillaries 1
+en2	GE2	Endothelial	Glomerular Capillaries	Glomerular Capillaries 2
+en3	VEC	Endothelial	Venular Endothelium	Venular Endothelium
+en5	AEC2	Endothelial	Arterioles	Arterioles 2
+en7	AEC1	Endothelial	Arterioles	Arterioles 1
+ep1	IC	Epithelial	Intercalated Cells	Intercalated Cells
+ep10	TAL	Epithelial	Thick Ascending Limb	Thick Ascending Limb
+ep2	iPT	Epithelial	Injured Proximal Tubule	Injured Proximal Tubule
+ep4	Fi6	Mesenchymal	Fibroblasts	Fibroblast 6
+ep6	PT	Epithelial	Proximal Tubule	Proximal Tubule
+ep7	PC	Epithelial	Prinicipal Cells	Collecting Duct Principal Cells
+hem5	DC	Immune	Dendritic Cells	Dendritic Cells
+hem6	Mono	Immune	Monocytes	Monocytes
+merge1	VR	Endothelial	Vasa Recta	Vasa Recta
+merge3	iMono	Immune	Monocytes	Injured Monocytes
+smc10	MF3b	Mesenchymal	Myofibroblasts	Myofibroblasts 3b
+smc11	Fib4a	Mesenchymal	Fibroblasts	Fibroblasts 4a
+smc12	MF2b	Mesenchymal	Myofibroblasts	Myofibroblasts 2b
+smc2	Pe2	Mesenchymal	Pericytes	Pericytes
+smc3	Fib2	Mesenchymal	Fibroblasts	Fibroblast 2
+smc4	Fib4b	Mesenchymal	Fibroblasts	Fibroblasts 4b
+smc5	MF1	Mesenchymal	Myofibroblasts	Myofibroblasts 1
+smc6	Mesa	Mesenchymal	Mesangial Cells	Mesangial Cells 1
+smc7	MF3a	Mesenchymal	Myofibroblasts	Myofibroblasts 3a
+smc8	MF2a	Mesenchymal	Myofibroblasts	Myofibroblasts 2a
+smc9	vSMC	Mesenchymal	Vascular Smooth Muscle Cells	Vascular Smooth Muscle Cells 2

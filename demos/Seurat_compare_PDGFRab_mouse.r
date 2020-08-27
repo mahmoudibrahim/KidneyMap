@@ -44,7 +44,7 @@ col_palette_trans = makeTransparent(col_palette, alpha = 0.4)
 
 #prefix and load data
 prefix = "Seurat_demo_" #prefix for output
-load("pdgfrabMap_japanium.filtered_matrix.RData") ## this contains data and our analysis
+load("/data/kramann/neil/mouse/pdgfrab/combined/map/pdgfrabMap_take2japanium.filtered_matrix.RData") ## this contains data and our analysis
 
 
 #Seurat processing and clustering, MNN for batch correction
@@ -111,3 +111,16 @@ pdf(paste0(prefix, "_compare_seurat_seuratcolors.pdf"))
 plot(mapCoords, col = colors_info, pch = 19, cex = 0.6)
 legend(min(mapCoords[,1]), min(mapCoords[,2]) + 1, legend = abbreviate(sort(unique(Idents(seu)))), pch=21, col=col_palette, pt.bg=col_palette_trans, pt.cex=2, cex=.8, bty="n", ncol = ceiling(length(unique(Idents(seu))) / 2))
 dev.off()
+
+
+#compare markers
+sg_seurat = sortGenes(counts(l_remove), Idents(seu), binarizeMethod="naive")
+pdf(paste0(prefix, "_suerat_top10.pdf"), width = 8)
+plotTopMarkerHeat(sg_seurat, averageCells=10^2, newOrder = c(9,6,7,11,8,5,2,4,1,3,10))
+dev.off()
+
+sg_seurat = sortGenes(counts(l_remove), l_remove$level3, binarizeMethod="naive")
+pdf(paste0(prefix, "_ouranalysis_top10.pdf"), width = 8)
+plotTopMarkerHeat(sg_seurat, averageCells=10^2)
+dev.off()
+
