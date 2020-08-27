@@ -1,0 +1,89 @@
+---
+title: "Create Single-Cell Experiment for CD10 negative dataset"
+author: "Javier Perales-Paton - javier.perales@bioquant.uni-heidelberg.de"
+output: github_document
+---
+
+## Setting the environment
+
+### Internal variables
+```{r}
+set.seed(1234)
+OUTDIR <- "./CD10negative_01_create_sce_output/";
+if(!dir.exists(OUTDIR)) dir.create(OUTDIR, recursive = TRUE);
+```
+
+### Load libraries
+```{r}
+library("Matrix")
+library("viper")
+# library("gridExtra")
+library("dplyr")
+library("purrr")
+library("GenomeInfoDbData")
+library("SingleCellExperiment")
+library("SummarizedExperiment")
+library("scran")
+library("scater")
+library("progeny")
+library("dorothea")
+```
+
+## Load data
+
+```{r}
+dat <- Matrix::readMM("../data/CD10negative/kidneyMap_UMI_counts.mtx")
+rowDat <- read.table("../data/CD10negative/kidneyMap_UMI_counts_rowData.txt",sep="\t",header=TRUE, stringsAsFactors = FALSE)
+colDat <- read.table("../data/CD10negative/kidneyMap_UMI_counts_colData.txt", sep="\t",header=TRUE, stringsAsFactors = FALSE)
+```
+
+```{r}
+# Genes
+rownames(dat) <- rowDat$ENSEMBL.ID
+rownames(rowDat) <- rowDat$ENSEMBL.ID
+
+# Cells
+colnames(dat) <- paste0("cell",1:ncol(dat))
+rownames(colDat) <- paste0("cell",1:ncol(dat))
+
+#rm(rowDat)
+```
+
+Summary of cell metadata
+```{r}
+summary(as.data.frame(colDat))
+```
+
+## Create a Single-Cell Experiment
+
+```{r}
+sce <- SingleCellExperiment(assays=list("counts"=dat),
+			    colData=colDat,
+			    rowData=rowDat)
+```
+
+## Normalize data
+```{r}
+sce = scran::computeSumFactors(sce, 
+			       sizes = seq(10, 200, 20), 
+			       clusters = sce$Annotation.Level.3, 
+			       positive = TRUE)
+sce <- logNormCounts(sce)
+```
+
+# Save data
+
+```{r}
+saveRDS(sce, file=paste0(OUTDIR,"/sce.rds"))
+```
+
+## SessionInfo
+```{r}
+sessionInfo()
+
+{                                                                                                                                                                                                           
+sink(file=paste0(OUTDIR,"/sessionInfo.txt"))
+print(sessionInfo())
+sink()
+}
+```

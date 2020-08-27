@@ -1,0 +1,121 @@
+---
+title: "human CD10 negative: Run CPDB to define a landscape of cell communication"
+author: "Javier Perales-Paton - javier.perales@bioquant.uni-heidelberg.de"
+output: github_document
+---
+
+## Setup environment
+
+### Internal variables
+```{r}
+set.seed(1234)
+# Please change it to your local installation of CellPhoneDB
+CPDB_DIR <- "~/.cpdb/releases/v2.0.0/"
+```
+
+### File structure
+```{r env}
+options(stringsAsFactors = FALSE)
+# Output directory
+OUTDIR <- "./CD10negative_02_CPDB_output/";
+if(!dir.exists(OUTDIR)) dir.create(OUTDIR);
+
+# We define independent output folders for lvl2 and lvl3 cell type
+# annotations
+OUTLVL2 <- paste0(OUTDIR,"/lvl2")
+if(!dir.exists(OUTLVL2)) dir.create(OUTLVL2);
+OUTLVL3 <- paste0(OUTDIR,"/lvl3")
+if(!dir.exists(OUTLVL3)) dir.create(OUTLVL3);
+
+# # Figures
+# FIGDIR <- paste0(OUTDIR, "/figures/")
+# knitr::opts_chunk$set(fig.path=FIGDIR)
+# knitr::opts_chunk$set(dev=c('png','tiff'))
+# # Data
+# DATADIR <- paste0(OUTDIR, "/data/")
+# if(!dir.exists(DATADIR)) dir.create(DATADIR);
+```
+### Load libraries
+```{r}
+library(Matrix)
+library(SingleCellExperiment)
+library(scran)
+library(scater)
+```
+
+## Load data
+
+```{r}
+sce <- readRDS("./CD10negative_01_create_sce_output/sce.rds")
+is(sce)
+dim(sce)
+```
+
+## Extract information and map genes onto human
+
+```{r}
+# take raw data and normalise it for the subset of cells
+count_norm <- as.matrix(logcounts(sce))
+
+meta_data2 <- data.frame("Cell"=rownames(colData(sce)),
+                        "cell_type"=colData(sce)$Annotation.Level.2)
+meta_data3 <- data.frame("Cell"=rownames(colData(sce)),
+                        "cell_type"=colData(sce)$Annotation.Level.3)
+```
+
+## Save CPDB input 
+
+```{r}
+# LVL2
+if(!file.exists(paste0(OUTLVL2,"/cellphonedb_count.txt"))) {
+write.table(count_norm, paste0(OUTLVL2,"/cellphonedb_count.txt"), sep="\t", quote=F, col.names=NA)
+}
+
+if(!file.exists(paste0(OUTLVL2,"/cellphonedb_meta.txt"))) {
+write.table(meta_data2, paste0(OUTLVL2,"/cellphonedb_meta.txt"), sep="\t", quote=F, row.names=F)
+}
+if(!file.exists(paste0(OUTLVL2,"/PBS_CellPhoneDB.sh"))) {
+file.copy(from = "../templates/PBS_CellPhoneDB.sh",
+	  to = paste0(OUTLVL2,"/PBS_CellPhoneDB.sh"))
+}
+
+# LVL3
+if(!file.exists(paste0(OUTLVL3,"/cellphonedb_count.txt"))) {
+write.table(count_norm, paste0(OUTLVL3,"/cellphonedb_count.txt"), sep="\t", quote=F, col.names=NA)
+}
+
+if(!file.exists(paste0(OUTLVL3,"/cellphonedb_meta.txt"))) {
+write.table(meta_data2, paste0(OUTLVL3,"/cellphonedb_meta.txt"), sep="\t", quote=F, row.names=F)
+}
+if(!file.exists(paste0(OUTLVL3,"/PBS_CellPhoneDB.sh"))) {
+file.copy(from = "../templates/PBS_CellPhoneDB.sh",
+	  to = paste0(OUTLVL3,"/PBS_CellPhoneDB.sh"))
+}
+```
+
+## Run CPDB
+
+```{r}
+# LVL2
+cmd <- paste0("qsub ",paste0(OUTLVL2,"/PBS_CellPhoneDB.sh"))
+if(!dir.exists(paste0(OUTLVL2,"/out"))) {
+	#system(cmd) # To be shuttled in the HPC
+}
+
+# LVL3
+cmd <- paste0("qsub ",paste0(OUTLVL3,"/PBS_CellPhoneDB.sh"))
+if(!dir.exists(paste0(OUTLVL3,"/out"))) {
+	#system(cmd) # To be shuttled in the HPC
+}
+```
+
+## SessionInfo
+```{r}
+sessionInfo()
+
+{                                                                                                                                                                                                           
+sink(file=paste0(OUTDIR,"/sessionInfo.txt"))
+print(sessionInfo())
+sink()
+}
+```
