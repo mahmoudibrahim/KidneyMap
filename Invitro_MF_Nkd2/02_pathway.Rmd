@@ -1,0 +1,263 @@
+---
+title: "Inference of pathway activities in Myelofibroblast with NKD2 gene perturbations in kidney"
+author: "Javier Perales-Patón - javier.perales@bioquant.uni-heidelberg.de - ORCID: 0000-0003-0780-6683" 
+output: github_document
+---
+
+Herein we explore pathway activities on the two experiments using PROGENy. We perform two inferences in 
+parallel for each experiment, using single-sample PROGENy estimates and gene-wise permutation PROGENy.
+
+## Set-up environment
+Define randome seed and output folder.
+```{r env}
+# Seed number
+set.seed(1234)
+# Output directory
+OUTDIR <- "./02_pathway_output/"
+if(!dir.exists(OUTDIR)) dir.create(OUTDIR);
+
+# Figures
+FIGDIR <- paste0(OUTDIR, "/figures/")
+knitr::opts_chunk$set(fig.path=FIGDIR)
+knitr::opts_chunk$set(dev=c('png', 'pdf'))
+# Data
+DATADIR <- paste0(OUTDIR, "/data/")
+if(!dir.exists(DATADIR)) dir.create(DATADIR);
+# If already exists, clean dirs?
+clean_dirs <- TRUE
+if(clean_dirs) {
+	unlink(list.files(OUTDIR, full.names=TRUE, recursive = TRUE))
+}
+```
+
+## Load libraries
+Essential R libraries.
+```{r}
+library(limma)
+library(progeny)
+library(broom)
+library(magrittr)
+library(ggplot2)
+suppressPackageStartupMessages(library(ComplexHeatmap))
+```
+
+## Load data
+We use the output data from previous step (01). In particular,
+the eBay object from limma which contains the contrasts and statistics.
+```{r}
+KO_v <- readRDS("./01_DGE_output/data/KO_v.rds")
+KO_eBay <- readRDS("./01_DGE_output/data/KO_eBay.rds")
+
+OE_v <- readRDS("./01_DGE_output/data/OE_v.rds")
+OE_eBay <- readRDS("./01_DGE_output/data/OE_eBay.rds")
+```
+
+## PROGENy analysis
+
+### PROGENy single-sample
+First, we define a function to pathway-wise test differences using a linear model.
+```{r}
+test_lm <- function(pathways, controls) {
+	result <- apply(pathways, 1, function(y) {
+				broom::tidy(lm(y ~ !controls)) %>%
+				dplyr::filter(term == "!controlsTRUE") %>%
+				dplyr::select(-term)
+	})
+	res <- dplyr::mutate(dplyr::bind_rows(result), 
+			     pathway=names(result))
+	return(res)
+}
+```
+
+We are going to calculate progeny scores without scaling the data. 
+We are going to scale it with respect the control conditions in each contrast.
+```{r KO_ssprog}
+KO_prog <- progeny(KO_v$E, scale=FALSE, organism="Human", top=100)
+KO_ctrls <- KO_v$targets$group == "KO_ctrl"
+KO_ctrl_mean <- apply(KO_prog[KO_ctrls, ], 2, mean)
+KO_ctrl_sd <- apply(KO_prog[KO_ctrls, ], 2, sd)
+
+KO_prog <- t(apply(KO_prog, 1, function(x) x - KO_ctrl_mean))
+KO_prog <- apply(KO_prog, 1, function(x) x / KO_ctrl_sd)
+
+# Test using a linear model
+## KO severe
+KOsev <- KO_v$targets$group %in% c("KO_ctrl", "KO_1")
+KOsev_ctrls <- KO_v$targets$group[KOsev] == "KO_ctrl"
+KOsev_prog_res <- test_lm(KO_prog[, KOsev], KOsev_ctrls)
+print(KOsev_prog_res)
+## KO shallow
+KOsha <- KO_v$targets$group %in% c("KO_ctrl", "KO_2", "KO_3")
+KOsha_ctrls <- KO_v$targets$group[KOsha] == "KO_ctrl"
+KOsha_prog_res <- test_lm(KO_prog[, KOsha], KOsha_ctrls)
+print(KOsha_prog_res)
+```
+
+```{r OE_ssprog}
+OE_prog <- progeny(OE_v$E, scale=FALSE, organism="Human", top=100)
+OE_ctrls <- OE_v$targets$group == "OE_ctrl"
+OE_ctrl_mean <- apply(OE_prog[OE_ctrls, ], 2, mean)
+OE_ctrl_sd <- apply(OE_prog[OE_ctrls, ], 2, sd)
+
+OE_prog <- t(apply(OE_prog, 1, function(x) x - OE_ctrl_mean))
+OE_prog <- apply(OE_prog, 1, function(x) x / OE_ctrl_sd)
+
+# Test using a linear model
+OE_prog_res <- test_lm(OE_prog, OE_ctrls)
+print(OE_prog_res)
+```
+
+Finally we investigate the sample-wise variability of pathway activities for the records
+```{r hp_ssprogeny, fig.width=7, fig.height=4, dpi=300}
+mat <- cbind(KO_prog, OE_prog)
+gr <- rbind(KO_v$targets[,"group",drop=FALSE],
+	    OE_v$targets[,"group", drop=FALSE])
+hc <- HeatmapAnnotation(df=gr)
+Heatmap(mat, top_annotation = hc, name="Activity\n(scaled to controls)", cluster_columns=FALSE)
+```
+
+### PROGENy gene-wide permutation
+```{r}
+# Get progeny model matrix
+progeny.mat <- getModel(organism = "Human", top = 100)
+progeny.mat$ID <- rownames(progeny.mat)
+progeny.mat <- progeny.mat[, c("ID", setdiff(colnames(progeny.mat), "ID"))]
+
+# Create a data.frame with the universe of genes and corresponding moderated-t
+# statistics. Warn: those genes filtered out because of low expression in any
+# of the two experiments are considered mot-t = 0, since it is expected that
+# both conditions are 0 expresion.
+IDs <- unique(c(rownames(KO_eBay$t), rownames(OE_eBay$t)))
+df <- data.frame(ID=IDs,
+		 KO_severe=rep(0, length(IDs)),
+		 KO_shallow=rep(0, length(IDs)),
+		 OE=rep(0, length(IDs)),
+		 row.names=IDs)
+# Fill out with mod-ts
+df[rownames(KO_eBay$t), "KO_severe"] <- KO_eBay$t[, "NKD2_KO_severe"]
+df[rownames(KO_eBay$t), "KO_shallow"] <- KO_eBay$t[, "NKD2_KO_shallow"]
+df[rownames(OE_eBay$t), "OE"] <- OE_eBay$t[, "NKD2_OE"]
+
+# Remove row.names
+rownames(df) <- NULL
+# Remove duplicated gene symbols
+df <- df[which(!duplicated(df$ID)),]
+
+set.seed(1234)
+progeny.res <- progenyPerm(df, progeny.mat)
+pvals <- apply(progeny.res, 2, function(z) pnorm(z))
+pvals <- apply(pvals, c(1,2), function(pval) ifelse(pval > 0.5, (1-pval)*2, pval*2))
+fdr <- matrix(p.adjust(as.vector(pvals), method="fdr"), ncol=ncol(pvals), nrow=nrow(pvals),
+	      byrow = FALSE, dimnames=dimnames(pvals))
+
+prog <- setNames(vector("list", nrow(progeny.res)), rownames(progeny.res))
+for(tag in rownames(progeny.res)) {
+    # Make a simple table with the outcome
+    progeny.cont <- cbind(Activity=progeny.res[tag,],Pvalue=pvals[tag,], FDR=fdr[tag,])
+    # Show in stdout
+    cat(paste("Pathway activity from",tag,"\n"), file=stdout())
+    print(progeny.cont)
+    prog[[tag]] <- progeny.cont
+    # Save if as a supplementary table in a file
+  write.table(progeny.cont,
+              file = paste0(DATADIR,"/",tag,"_progeny.csv"),
+              sep=",", col.names = NA, row.names = TRUE)
+}
+```
+
+```{r make_hp}
+### Make a heatmap of the results for the 3 contrasts
+# ACT is a matrix of Activity
+# PADJ is a matrix of strings for each cell
+makeHP <- function(ACT, TXT, cluster_col=FALSE) {
+
+col_fun <- circlize::colorRamp2(c(-3,0,3), c("blue","white","red"))
+legend_labs <- c(floor(min(as.vector(ACT))),
+		 -2,0,2,
+		 ceiling(max(as.vector(ACT))))
+hp <- Heatmap(ACT, column_names_side="top", row_names_side="left",
+	      col=col_fun, cluster_columns=cluster_col,
+	      name="Activity (z-score)",
+
+	      heatmap_legend_param=list(direction="horizontal",
+					labels=as.character(legend_labs),
+					at=legend_labs,
+					labels_gp=gpar(fontsize=12),
+					legend_width=unit(6,"cm")),
+	show_column_dend=FALSE, show_row_dend=FALSE,	 
+ 	column_names_rot=0,
+	row_names_gp=gpar(fontsize=12),
+    	row_names_max_width = max_text_width(
+        			rownames(ACT), 
+        			gp = gpar(fontsize = 12)),
+	column_names_centered=TRUE,
+	cell_fun = function(j, i, x, y, width, height, fill) {
+		grid.text(paste0(sprintf("%.2f", ACT[i, j]),
+				 " (",TXT[i, j],")"), 
+			  x, y, 
+			  gp = gpar(fontsize = 12,
+				    fontface = ifelse(TXT[i,j]!="ns",
+						      "bold","plain"),
+				    col = ifelse(ACT[i,j] < -1,
+						 "white","black"))
+			  )
+	}
+)
+return(hp)
+}
+```
+
+```{r pval2txt}
+pval2txt <- function(padj) {
+padj_txt <- apply(padj, c(1,2), function(pval) {
+	if(pval< 0.001) {
+		txt <- "***"
+	} else if (pval < 0.01) {
+		txt <- "**"
+	} else if (pval < 0.05) {
+		txt <- "*"
+	} else {
+		txt <- "ns"
+	}
+	return(txt)
+})
+
+return(padj_txt)
+}
+```
+
+```{r Fig5k, fig.width=5, fig.height=5, dpi=300}
+ACT <- t(progeny.res)
+ACT <- ACT[, rev(colnames(ACT))]
+PVAL <- t(fdr)
+PVAL <- PVAL[, rev(colnames(PVAL))]
+stopifnot(all(colnames(ACT)==colnames(PVAL)))
+
+TXT <- pval2txt(PVAL)
+
+hp <- makeHP(ACT, TXT)
+draw(hp, heatmap_legend_side="bottom")
+```
+
+## Conclusions
+> The results obtained by both approaches will be quite similar: JAK-STAT pathway is highly dysregulated towards
+NKD2 functional impact in a positive direction. TGFb follows this trend with a strong association too, but lower 
+magnitude of dysregulation.
+
+## Save data
+```{r}
+saveRDS(prog, file=paste0(DATADIR,"/prog.rds"))
+```
+
+## Session info
+
+```{r}
+sessionInfo()
+
+{                                                                                                                                                                                                           
+sink(file=paste0(OUTDIR,"/sessionInfo.txt"))
+print(sessionInfo())
+sink()
+}
+```
+

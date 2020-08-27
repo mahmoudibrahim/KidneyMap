@@ -1,0 +1,13 @@
+id_cp_interaction: Unique CellPhoneDB identifier for each interaction stored in the database.
+interacting_pair: Name of the interacting pairs separated by “|”.
+partner A or B: Identifier for the first interacting partner (A) or the second (B). It could be: UniProt (prefix simple:) or complex (prefix complex:)
+gene A or B: Gene identifier for the first interacting partner (A) or the second (B). The identifier will depend on the input user list.
+secreted: True if one of the partners is secreted.
+Receptor A or B: True if the first interacting partner (A) or the second (B) is annotated as a receptor in our database.
+annotation_strategy: Curated if the interaction was annotated by the CellPhoneDB developers. Otherwise
+is_integrin: True if one of the partners is integrin.
+avgExpr: Mean values for all the interacting partners: mean value refers to the total mean of the individual partner average expression values in the corresponding interacting pairs of cell types. If one of the mean values is 0, then the total mean is set to 0. 
+p.value: p-values for the all the interacting partners: p.value refers to the enrichment of the interacting ligand-receptor pair in each of the interacting pairs of cell types.
+rank: Total number of significant p-values from all cell pairs for the interaction divided by the number of cell type-cell type comparisons.
+cell1:cell2 : interacting cell population, where cell1 expresses gene_a and cell2 expresses gene_b
+[pathway : whether the interaction belongs to a annotated pathway of interest]

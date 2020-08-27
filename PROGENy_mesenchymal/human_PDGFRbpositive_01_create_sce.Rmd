@@ -1,0 +1,122 @@
+---
+title: "Create Single-Cell Experiment for human PDGFRb positive dataset"
+author: "Javier Perales-Paton - javier.perales@bioquant.uni-heidelberg.de"
+output: github_document
+---
+
+## Setting the environment
+
+### Internal variables
+```{r}
+set.seed(1234)
+OUTDIR <- "./human_PDGFRbpositive_01_create_sce_output/";
+if(!dir.exists(OUTDIR)) dir.create(OUTDIR, recursive = TRUE);
+```
+
+### Load libraries
+```{r}
+library("Matrix")
+library("viper")
+# library("gridExtra")
+library("dplyr")
+library("purrr")
+library("GenomeInfoDbData")
+library("SingleCellExperiment")
+library("SummarizedExperiment")
+library("scran")
+library("scater")
+library("progeny")
+library("dorothea")
+library("genesorteR")
+```
+
+## Load data
+
+```{r}
+dat <- Matrix::readMM("../data/pdgfrb/pdgfrbMap_UMI_counts.mtx")
+rowDat <- read.table("../data/pdgfrb/pdgfrbMap_UMI_counts_rowData.txt",sep="\t",header=TRUE, stringsAsFactors = FALSE)
+colDat <- read.table("../data/pdgfrb/pdgfrbMap_UMI_counts_colData.txt", sep="\t",header=TRUE, stringsAsFactors = FALSE)
+```
+
+```{r}
+# Genes
+rownames(dat) <- rowDat$ENSEMBL.ID
+rownames(rowDat) <- rowDat$ENSEMBL.ID
+
+# Cells
+colnames(dat) <- paste0("cell",1:ncol(dat))
+rownames(colDat) <- paste0("cell",1:ncol(dat))
+
+#rm(rowDat)
+```
+
+Summary of cell metadata
+```{r}
+summary(as.data.frame(colDat))
+```
+
+## Create a Single-Cell Experiment
+
+```{r}
+sce <- SingleCellExperiment(assays=list("counts"=dat),
+			    colData=colDat,
+			    rowData=rowDat)
+```
+
+## Normalize data
+```{r}
+sce = scran::computeSumFactors(sce, 
+			       sizes = seq(10, 200, 20), 
+			       clusters = sce$Annotation.Level.3, 
+			       positive = TRUE)
+sce <- logNormCounts(sce)
+```
+
+### Inference of Pathway activities
+```{r}
+# We use the matrix instead of the sce object because currently, the wrapper of progeny for
+# sce objects uses the non-log transform data, which maximizes the variability of lowly
+# expressed genes in UMI counts. Thus, we prefer to use log2 data
+mat <- as.matrix(logcounts(sce))
+rownames(mat) <- rowData(sce)$Gene.Symbol
+prog <- progeny(mat, scale=TRUE, organism="Human", top=500, perm=1)
+prog <- t(prog)
+stopifnot(colnames(sce) == colnames(prog))
+rm(mat)
+```
+
+Add alternative experiments to SCE object
+```{r}
+altExp(sce, "pathway") <- SummarizedExperiment(assays=list("pathway"=prog))
+```
+
+## Gene sorter
+```{r}
+sg_level2 = sortGenes(counts(sce), 
+		      colData(sce)$Annotation.Level.2,
+		      binarizeMethod = "naive")
+
+sg_level3 = sortGenes(counts(sce), 
+		      colData(sce)$Annotation.Level.3,
+		      binarizeMethod = "naive")
+
+assay(sce, "binary_lvl2", withDimnames=FALSE) <- sg_level2$binary
+assay(sce, "binary_lvl3", withDimnames=FALSE) <- sg_level3$binary
+```
+
+# Save data
+
+```{r}
+saveRDS(sce, file=paste0(OUTDIR,"/sce.rds"))
+```
+
+## SessionInfo
+```{r}
+sessionInfo()
+
+{                                                                                                                                                                                                           
+sink(file=paste0(OUTDIR,"/sessionInfo.txt"))
+print(sessionInfo())
+sink()
+}
+```
